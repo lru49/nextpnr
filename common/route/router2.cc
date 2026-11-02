@@ -503,20 +503,19 @@ struct Router2
     }
 
     float score_wire_for_arc(NetInfo *net, store_index<PortRef> user, size_t phys_pin, WireId wire, PipId pip,
-                             float crit_weight)
+                             const PerWireData &wd, float base_cost, float crit_weight)
     {
-        auto &wd = wire_data(wire);
         auto &nd = nets.at(net->udata);
-        float base_cost = cfg.get_base_cost(ctx, wire, pip, crit_weight);
         int overuse = wd.curr_cong;
         float hist_cost = 1.0f + crit_weight * (wd.hist_cong_cost - 1.0f);
         float bias_cost = 0;
         float resource_hist_cost = 0.0f;
         float resource_present_cost = 0.0f;
         int source_uses = 0;
-        if (nd.wires.count(wire)) {
+        auto fnd_wire = nd.wires.find(wire);
+        if (fnd_wire != nd.wires.end()) {
             overuse -= 1;
-            source_uses = nd.wires.at(wire).second;
+            source_uses = fnd_wire->second.second;
         }
         float present_cost = 1.0f + overuse * curr_cong_weight * crit_weight;
         if (pip != PipId()) {
@@ -559,9 +558,9 @@ struct Router2
         auto &nd = nets.at(net->udata);
         auto &wd = flat_wires[wire];
         int source_uses = 0;
-        if (nd.wires.count(wd.w)) {
-            source_uses = nd.wires.at(wd.w).second;
-        }
+        auto fnd_wire = nd.wires.find(wd.w);
+        if (fnd_wire != nd.wires.end())
+            source_uses = fnd_wire->second.second;
         // FIXME: timing/wirelength balance?
         delay_t est_delay = ctx->estimateDelay(bwd ? src_sink : wd.w, bwd ? wd.w : src_sink);
         return (ctx->getDelayNS(est_delay) / (1 + source_uses * crit_weight)) + cfg.ipin_cost_adder;
@@ -1003,8 +1002,10 @@ struct Router2
                         WireId next = ctx->getPipDstWire(dh);
                         int next_idx = wire_index(next);
                         WireScore next_score;
-                        next_score.delay = curr.score.delay + cfg.get_base_cost(ctx, next, dh, crit_weight);
-                        next_score.cost = curr.score.cost + score_wire_for_arc(net, i, phys_pin, next, dh, crit_weight);
+                        float base_cost = cfg.get_base_cost(ctx, next, dh, crit_weight);
+                        next_score.delay = curr.score.delay + base_cost;
+                        next_score.cost = curr.score.cost + score_wire_for_arc(net, i, phys_pin, next, dh,
+                                                                               flat_wires.at(next_idx), base_cost, crit_weight);
                         next_score.togo_cost =
                                 cfg.estimate_weight * get_togo_cost(net, i, next_idx, dst_wire, false, crit_weight);
                         if (was_visited_fwd(next_idx, next_score.delay)) {
@@ -1078,8 +1079,10 @@ struct Router2
                         WireId next = ctx->getPipSrcWire(uh);
                         int next_idx = wire_index(next);
                         WireScore next_score;
-                        next_score.delay = curr.score.delay + cfg.get_base_cost(ctx, next, uh, crit_weight);
-                        next_score.cost = curr.score.cost + score_wire_for_arc(net, i, phys_pin, next, uh, crit_weight);
+                        float base_cost = cfg.get_base_cost(ctx, next, uh, crit_weight);
+                        next_score.delay = curr.score.delay + base_cost;
+                        next_score.cost = curr.score.cost + score_wire_for_arc(net, i, phys_pin, next, uh,
+                                                                               flat_wires.at(next_idx), base_cost, crit_weight);
                         next_score.togo_cost = const_mode
                                                        ? 0
                                                        : cfg.estimate_weight * get_togo_cost(net, i, next_idx, src_wire,
