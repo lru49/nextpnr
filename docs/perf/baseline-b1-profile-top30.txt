@@ -1,0 +1,133 @@
+B1 d56c470f profiling build; perf record -F999 -g; self time, no children
+
+== whole (0%-100%) ==
+# Samples: 665K of event 'armv8_pmuv3_0/cycles/P'
+    16.52%  nextpnr-himbaec  nextpnr-himbaechel-xilinx  [.] nextpnr_himbaechel::dict<nextpnr_himbaechel::WireId, int, nextpnr_himbaechel::hash_ops<nextpnr_himbaechel::WireId> >::do_lookup(nextpnr_himbaechel::WireId const&, int&) const
+    10.78%  nextpnr-himbaec  nextpnr-himbaechel-xilinx  [.] nextpnr_himbaechel::Arch::getPipDelay(nextpnr_himbaechel::PipId) const
+     5.96%  nextpnr-himbaec  nextpnr-himbaechel-xilinx  [.] nextpnr_himbaechel::dict<nextpnr_himbaechel::WireId, nextpnr_himbaechel::Loc, nextpnr_himbaechel::hash_ops<nextpnr_himbaechel::WireId> >::do_lookup(nextpnr_himbaechel::WireId const&, int&) const
+     5.80%  nextpnr-himbaec  nextpnr-himbaechel-xilinx  [.] nextpnr_himbaechel::XilinxImpl::is_pip_unavail(nextpnr_himbaechel::PipId) const
+     5.35%  nextpnr-himbaec  nextpnr-himbaechel-xilinx  [.] nextpnr_himbaechel::BaseArch<nextpnr_himbaechel::ArchRanges>::getBoundPipNet(nextpnr_himbaechel::PipId) const
+     5.23%  nextpnr-himbaec  nextpnr-himbaechel-xilinx  [.] nextpnr_himbaechel::(anonymous namespace)::Router2::score_wire_for_arc(nextpnr_himbaechel::NetInfo*, nextpnr_himbaechel::store_index<nextpnr_himbaechel::PortRef>, unsigned long, nextpnr_himbaechel::WireId, nextpnr_himbaechel::PipId, float) [clone .isra.0]
+     4.84%  nextpnr-himbaec  nextpnr-himbaechel-xilinx  [.] nextpnr_himbaechel::(anonymous namespace)::Router2::route_arc(nextpnr_himbaechel::(anonymous namespace)::Router2::ThreadContext&, nextpnr_himbaechel::NetInfo*, nextpnr_himbaechel::store_index<nextpnr_himbaechel::PortRef>, unsigned long, bool, bool) [clone .constprop.1]
+     3.46%  nextpnr-himbaec  nextpnr-himbaechel-xilinx  [.] nextpnr_himbaechel::(anonymous namespace)::Router2::route_arc(nextpnr_himbaechel::(anonymous namespace)::Router2::ThreadContext&, nextpnr_himbaechel::NetInfo*, nextpnr_himbaechel::store_index<nextpnr_himbaechel::PortRef>, unsigned long, bool, bool) [clone .constprop.0]
+     2.09%  nextpnr-himbaec  nextpnr-himbaechel-xilinx  [.] nextpnr_himbaechel::XilinxImpl::estimateDelay(nextpnr_himbaechel::WireId, nextpnr_himbaechel::WireId) const
+     2.00%  nextpnr-himbaec  nextpnr-himbaechel-xilinx  [.] nextpnr_himbaechel::(anonymous namespace)::chip_tile_info(nextpnr_himbaechel::ChipInfoPOD const*, int) [clone .lto_priv.3] [clone .lto_priv.0]
+     1.93%  nextpnr-himbaec  nextpnr-himbaechel-xilinx  [.] nextpnr_himbaechel::Arch::normalise_wire(int, int) const
+     1.87%  nextpnr-himbaec  nextpnr-himbaechel-xilinx  [.] nextpnr_himbaechel::Arch::getPipsUphill(nextpnr_himbaechel::WireId) const [clone .lto_priv.0]
+     1.73%  nextpnr-himbaec  libstdc++.so.6.0.33        [.] std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> >::find(char const*, unsigned long, unsigned long) const
+     1.56%  nextpnr-himbaec  nextpnr-himbaechel-xilinx  [.] nextpnr_himbaechel::dict<nextpnr_himbaechel::WireId, std::pair<nextpnr_himbaechel::PipId, int>, nextpnr_himbaechel::hash_ops<nextpnr_himbaechel::WireId> >::do_lookup(nextpnr_himbaechel::WireId const&, int&) const
+     1.55%  nextpnr-himbaec  nextpnr-himbaechel-xilinx  [.] nextpnr_himbaechel::(anonymous namespace)::chip_wire_info(nextpnr_himbaechel::ChipInfoPOD const*, nextpnr_himbaechel::WireId) [clone .lto_priv.4] [clone .lto_priv.0]
+     1.42%  nextpnr-himbaec  nextpnr-himbaechel-xilinx  [.] nextpnr_himbaechel::XilinxImpl::isBelLocationValid(nextpnr_himbaechel::BelId, bool) const
+     1.21%  nextpnr-himbaec  nextpnr-himbaechel-xilinx  [.] nextpnr_himbaechel::dict<nextpnr_himbaechel::CellPortKey, nextpnr_himbaechel::TimingAnalyser::PerPort, nextpnr_himbaechel::hash_ops<nextpnr_himbaechel::CellPortKey> >::at(nextpnr_himbaechel::CellPortKey const&) const
+     1.02%  nextpnr-himbaec  nextpnr-himbaechel-xilinx  [.] nextpnr_himbaechel::IdString::str[abi:cxx11](nextpnr_himbaechel::BaseCtx const*) const [clone .isra.0]
+     0.94%  nextpnr-himbaec  nextpnr-himbaechel-xilinx  [.] nextpnr_himbaechel::default_base_cost(nextpnr_himbaechel::Context*, nextpnr_himbaechel::WireId, nextpnr_himbaechel::PipId, float)
+     0.91%  nextpnr-himbaec  nextpnr-himbaechel-xilinx  [.] std::priority_queue<nextpnr_himbaechel::(anonymous namespace)::Router2::QueuedWire, std::vector<nextpnr_himbaechel::(anonymous namespace)::Router2::QueuedWire, std::allocator<nextpnr_himbaechel::(anonymous namespace)::Router2::QueuedWire> >, nextpnr_himbaechel::(anonymous namespace)::Router2::QueuedWire::Greater>::push(nextpnr_himbaechel::(anonymous namespace)::Router2::QueuedWire&&) [clone .lto_priv.0]
+     0.80%  nextpnr-himbaec  nextpnr-himbaechel-xilinx  [.] nextpnr_himbaechel::XilinxImpl::notifyBelChange(nextpnr_himbaechel::BelId, nextpnr_himbaechel::CellInfo*)
+     0.78%  nextpnr-himbaec  nextpnr-himbaechel-xilinx  [.] nextpnr_himbaechel::indexed_store<nextpnr_himbaechel::PortRef>::iterator::operator++()
+     0.77%  nextpnr-himbaec  nextpnr-himbaechel-xilinx  [.] nextpnr_himbaechel::SAPlacer::add_move_cell(nextpnr_himbaechel::SAPlacer::MoveChangeData&, nextpnr_himbaechel::CellInfo*, nextpnr_himbaechel::BelId)
+     0.77%  nextpnr-himbaec  nextpnr-himbaechel-xilinx  [.] nextpnr_himbaechel::Arch::getPipSrcWire(nextpnr_himbaechel::PipId) const
+     0.76%  nextpnr-himbaec  nextpnr-himbaechel-xilinx  [.] nextpnr_himbaechel::(anonymous namespace)::chip_pip_info(nextpnr_himbaechel::ChipInfoPOD const*, nextpnr_himbaechel::PipId) [clone .lto_priv.0] [clone .lto_priv.0]
+     0.75%  nextpnr-himbaec  nextpnr-himbaechel-xilinx  [.] nextpnr_himbaechel::BaseArch<nextpnr_himbaechel::ArchRanges>::getBoundBelCell(nextpnr_himbaechel::BelId) const
+     0.72%  nextpnr-himbaec  nextpnr-himbaechel-xilinx  [.] nextpnr_himbaechel::dict<nextpnr_himbaechel::WireId, int, nextpnr_himbaechel::hash_ops<nextpnr_himbaechel::WireId> >::at(nextpnr_himbaechel::WireId const&)
+     0.70%  nextpnr-himbaec  nextpnr-himbaechel-xilinx  [.] nextpnr_himbaechel::XilinxImpl::get_tags(nextpnr_himbaechel::CellInfo const*) const
+     0.65%  nextpnr-himbaec  nextpnr-himbaechel-xilinx  [.] std::_Function_handler<float (nextpnr_himbaechel::Context*, nextpnr_himbaechel::WireId, nextpnr_himbaechel::PipId, float), float (*)(nextpnr_himbaechel::Context*, nextpnr_himbaechel::WireId, nextpnr_himbaechel::PipId, float)>::_M_invoke(std::_Any_data const&, nextpnr_himbaechel::Context*&&, nextpnr_himbaechel::WireId&&, nextpnr_himbaechel::PipId&&, float&&)
+     0.64%  nextpnr-himbaec  nextpnr-himbaechel-xilinx  [.] nextpnr_himbaechel::XilinxImpl::getBelBucketForBel(nextpnr_himbaechel::BelId) const
+
+== analytic (0%-8%) ==
+# Samples: 53K of event 'armv8_pmuv3_0/cycles/P' (time slices: 0%-8%)
+     8.13%  nextpnr-himbaec  nextpnr-himbaechel-xilinx  [.] nextpnr_himbaechel::XilinxImpl::isBelLocationValid(nextpnr_himbaechel::BelId, bool) const
+     7.90%  nextpnr-himbaec  nextpnr-himbaechel-xilinx  [.] nextpnr_himbaechel::XilinxImpl::getBelBucketForBel(nextpnr_himbaechel::BelId) const
+     6.68%  nextpnr-himbaec  nextpnr-himbaechel-xilinx  [.] nextpnr_himbaechel::dict<nextpnr_himbaechel::IdString, nextpnr_himbaechel::IdString, nextpnr_himbaechel::hash_ops<nextpnr_himbaechel::IdString> >::do_lookup(nextpnr_himbaechel::IdString const&, int&) const
+     6.38%  nextpnr-himbaec  nextpnr-himbaechel-xilinx  [.] nextpnr_himbaechel::dict<nextpnr_himbaechel::IdString, nextpnr_himbaechel::HeAPPlacer::CellLocation, nextpnr_himbaechel::hash_ops<nextpnr_himbaechel::IdString> >::at(nextpnr_himbaechel::IdString const&)
+     6.15%  nextpnr-himbaec  nextpnr-himbaechel-xilinx  [.] nextpnr_himbaechel::HeAPPlacer::StrictLegaliser::try_place_cell(nextpnr_himbaechel::CellInfo*, int, int, int)
+     5.73%  nextpnr-himbaec  nextpnr-himbaechel-xilinx  [.] nextpnr_himbaechel::BaseArch<nextpnr_himbaechel::ArchRanges>::getBoundBelCell(nextpnr_himbaechel::BelId) const
+     5.12%  nextpnr-himbaec  nextpnr-himbaechel-xilinx  [.] nextpnr_himbaechel::(anonymous namespace)::chip_tile_info(nextpnr_himbaechel::ChipInfoPOD const*, int) [clone .lto_priv.3] [clone .lto_priv.0]
+     4.36%  nextpnr-himbaec  nextpnr-himbaechel-xilinx  [.] nextpnr_himbaechel::indexed_store<nextpnr_himbaechel::PortRef>::iterator::operator++()
+     4.10%  nextpnr-himbaec  nextpnr-himbaechel-xilinx  [.] nextpnr_himbaechel::dict<int, int, nextpnr_himbaechel::hash_ops<int> >::do_lookup(int const&, int&) const
+     3.55%  nextpnr-himbaec  nextpnr-himbaechel-xilinx  [.] nextpnr_himbaechel::XilinxImpl::get_tags(nextpnr_himbaechel::CellInfo const*) const
+     3.41%  nextpnr-himbaec  nextpnr-himbaechel-xilinx  [.] nextpnr_himbaechel::dict<nextpnr_himbaechel::IdString, nextpnr_himbaechel::PortInfo, nextpnr_himbaechel::hash_ops<nextpnr_himbaechel::IdString> >::do_lookup(nextpnr_himbaechel::IdString const&, int&) const
+     3.16%  nextpnr-himbaec  nextpnr-himbaechel-xilinx  [.] nextpnr_himbaechel::HeAPPlacer::StrictLegaliser::legalise_cell(nextpnr_himbaechel::CellInfo*)
+     3.15%  nextpnr-himbaec  nextpnr-himbaechel-xilinx  [.] nextpnr_himbaechel::XilinxImpl::notifyBelChange(nextpnr_himbaechel::BelId, nextpnr_himbaechel::CellInfo*)
+     2.54%  nextpnr-himbaec  nextpnr-himbaechel-xilinx  [.] nextpnr_himbaechel::pool<nextpnr_himbaechel::BelId, nextpnr_himbaechel::hash_ops<nextpnr_himbaechel::BelId> >::do_lookup(nextpnr_himbaechel::BelId const&, int&) const
+     2.30%  nextpnr-himbaec  nextpnr-himbaechel-xilinx  [.] std::vector<std::pair<int, double>, std::allocator<std::pair<int, double> > >::_M_insert_rval(__gnu_cxx::__normal_iterator<std::pair<int, double> const*, std::vector<std::pair<int, double>, std::allocator<std::pair<int, double> > > >, std::pair<int, double>&&) [clone .isra.0]
+     1.88%  nextpnr-himbaec  nextpnr-himbaechel-xilinx  [.] nextpnr_himbaechel::DeterministicRNG::rng(int)
+     1.73%  nextpnr-himbaec  nextpnr-himbaechel-xilinx  [.] void Eigen::internal::conjugate_gradient<Eigen::Transpose<Eigen::Ref<Eigen::SparseMatrix<double, 0, int> const, 0, Eigen::OuterStride<-1> > const>, Eigen::Matrix<double, -1, 1, 0, -1, 1>, Eigen::Matrix<double, -1, 1, 0, -1, 1>, Eigen::DiagonalPreconditioner<double> >(Eigen::Transpose<Eigen::Ref<Eigen::SparseMatrix<double, 0, int> const, 0, Eigen::OuterStride<-1> > const> const&, Eigen::Matrix<double, -1, 1, 0, -1, 1> const&, Eigen::Matrix<double, -1, 1, 0, -1, 1>&, Eigen::DiagonalPreconditioner<double> const&, long&, Eigen::Matrix<double, -1, 1, 0, -1, 1>::RealScalar&) [clone .constprop.0]
+     1.72%  nextpnr-himbaec  nextpnr-himbaechel-xilinx  [.] nextpnr_himbaechel::dict<nextpnr_himbaechel::IdString, int, nextpnr_himbaechel::hash_ops<nextpnr_himbaechel::IdString> >::at(nextpnr_himbaechel::IdString const&) const
+     1.68%  nextpnr-himbaec  nextpnr-himbaechel-xilinx  [.] nextpnr_himbaechel::dict<nextpnr_himbaechel::CellPortKey, nextpnr_himbaechel::TimingAnalyser::PerPort, nextpnr_himbaechel::hash_ops<nextpnr_himbaechel::CellPortKey> >::at(nextpnr_himbaechel::CellPortKey const&) const
+     1.68%  nextpnr-himbaec  nextpnr-himbaechel-xilinx  [.] nextpnr_himbaechel::Arch::getBelLocation(nextpnr_himbaechel::BelId) const
+     1.64%  nextpnr-himbaec  nextpnr-himbaechel-xilinx  [.] nextpnr_himbaechel::HeAPPlacer::build_equations(nextpnr_himbaechel::(anonymous namespace)::EquationSystem<double>&, bool, int)::{lambda(nextpnr_himbaechel::PortRef&, nextpnr_himbaechel::PortRef&, double)#1}::operator()(nextpnr_himbaechel::PortRef&, nextpnr_himbaechel::PortRef&, double) const [clone .isra.0]
+     1.52%  nextpnr-himbaec  nextpnr-himbaechel-xilinx  [.] nextpnr_himbaechel::dict<nextpnr_himbaechel::BelId, nextpnr_himbaechel::CellInfo*, nextpnr_himbaechel::hash_ops<nextpnr_himbaechel::BelId> >::operator[](nextpnr_himbaechel::BelId const&)
+     1.52%  nextpnr-himbaec  nextpnr-himbaechel-xilinx  [.] nextpnr_himbaechel::dict<nextpnr_himbaechel::WireId, int, nextpnr_himbaechel::hash_ops<nextpnr_himbaechel::WireId> >::do_lookup(nextpnr_himbaechel::WireId const&, int&) const
+     1.17%  nextpnr-himbaec  nextpnr-himbaechel-xilinx  [.] nextpnr_himbaechel::Arch::getPipDelay(nextpnr_himbaechel::PipId) const
+     1.04%  nextpnr-himbaec  nextpnr-himbaechel-xilinx  [.] nextpnr_himbaechel::CellInfo::getPort(nextpnr_himbaechel::IdString)
+     0.89%  nextpnr-himbaec  nextpnr-himbaechel-xilinx  [.] nextpnr_himbaechel::Arch::getBelBucketForBel(nextpnr_himbaechel::BelId) const
+     0.89%  nextpnr-himbaec  nextpnr-himbaechel-xilinx  [.] nextpnr_himbaechel::XilinxImpl::measure_from(nextpnr_himbaechel::WireId, int, int, std::vector<int, std::allocator<int> >&) const
+     0.83%  nextpnr-himbaec  nextpnr-himbaechel-xilinx  [.] nextpnr_himbaechel::dict<int, int, nextpnr_himbaechel::hash_ops<int> >::at(int const&)
+     0.69%  nextpnr-himbaec  nextpnr-himbaechel-xilinx  [.] nextpnr_himbaechel::HeAPPlacer::build_equations(nextpnr_himbaechel::(anonymous namespace)::EquationSystem<double>&, bool, int) [clone .lto_priv.0]
+     0.47%  nextpnr-himbaec  nextpnr-himbaechel-xilinx  [.] nextpnr_himbaechel::XilinxImpl::is_logic_tile(nextpnr_himbaechel::BelId) const
+
+== simulated-annealing (8%-16%) ==
+# Samples: 53K of event 'armv8_pmuv3_0/cycles/P' (time slices: 8%-16%)
+     9.49%  nextpnr-himbaec  nextpnr-himbaechel-xilinx  [.] nextpnr_himbaechel::SAPlacer::add_move_cell(nextpnr_himbaechel::SAPlacer::MoveChangeData&, nextpnr_himbaechel::CellInfo*, nextpnr_himbaechel::BelId)
+     9.41%  nextpnr-himbaec  nextpnr-himbaechel-xilinx  [.] nextpnr_himbaechel::XilinxImpl::isBelLocationValid(nextpnr_himbaechel::BelId, bool) const
+     9.14%  nextpnr-himbaec  nextpnr-himbaechel-xilinx  [.] nextpnr_himbaechel::dict<nextpnr_himbaechel::CellPortKey, nextpnr_himbaechel::TimingAnalyser::PerPort, nextpnr_himbaechel::hash_ops<nextpnr_himbaechel::CellPortKey> >::at(nextpnr_himbaechel::CellPortKey const&) const
+     6.71%  nextpnr-himbaec  nextpnr-himbaechel-xilinx  [.] nextpnr_himbaechel::XilinxImpl::notifyBelChange(nextpnr_himbaechel::BelId, nextpnr_himbaechel::CellInfo*)
+     5.02%  nextpnr-himbaec  nextpnr-himbaechel-xilinx  [.] nextpnr_himbaechel::dict<nextpnr_himbaechel::BelId, nextpnr_himbaechel::CellInfo*, nextpnr_himbaechel::hash_ops<nextpnr_himbaechel::BelId> >::operator[](nextpnr_himbaechel::BelId const&)
+     4.99%  nextpnr-himbaec  nextpnr-himbaechel-xilinx  [.] nextpnr_himbaechel::pool<nextpnr_himbaechel::BelId, nextpnr_himbaechel::hash_ops<nextpnr_himbaechel::BelId> >::do_lookup(nextpnr_himbaechel::BelId const&, int&) const
+     4.72%  nextpnr-himbaec  nextpnr-himbaechel-xilinx  [.] nextpnr_himbaechel::SAPlacer::compute_cost_changes(nextpnr_himbaechel::SAPlacer::MoveChangeData&)
+     4.72%  nextpnr-himbaec  nextpnr-himbaechel-xilinx  [.] nextpnr_himbaechel::indexed_store<nextpnr_himbaechel::PortRef>::iterator::operator++()
+     4.63%  nextpnr-himbaec  nextpnr-himbaechel-xilinx  [.] nextpnr_himbaechel::XilinxImpl::get_tags(nextpnr_himbaechel::CellInfo const*) const
+     3.61%  nextpnr-himbaec  nextpnr-himbaechel-xilinx  [.] nextpnr_himbaechel::dict<nextpnr_himbaechel::IdString, nextpnr_himbaechel::PortInfo, nextpnr_himbaechel::hash_ops<nextpnr_himbaechel::IdString> >::do_lookup(nextpnr_himbaechel::IdString const&, int&) const
+     3.57%  nextpnr-himbaec  nextpnr-himbaechel-xilinx  [.] nextpnr_himbaechel::BaseArch<nextpnr_himbaechel::ArchRanges>::getBoundBelCell(nextpnr_himbaechel::BelId) const
+     3.54%  nextpnr-himbaec  nextpnr-himbaechel-xilinx  [.] nextpnr_himbaechel::SAPlacer::place(bool) [clone .isra.0]
+     2.98%  nextpnr-himbaec  nextpnr-himbaechel-xilinx  [.] nextpnr_himbaechel::dict<nextpnr_himbaechel::IdString, std::vector<nextpnr_himbaechel::IdString, std::allocator<nextpnr_himbaechel::IdString> >, nextpnr_himbaechel::hash_ops<nextpnr_himbaechel::IdString> >::at(nextpnr_himbaechel::IdString const&) const
+     2.75%  nextpnr-himbaec  nextpnr-himbaechel-xilinx  [.] nextpnr_himbaechel::Context::predictArcDelay(nextpnr_himbaechel::NetInfo const*, nextpnr_himbaechel::PortRef const&) const
+     2.64%  nextpnr-himbaec  nextpnr-himbaechel-xilinx  [.] nextpnr_himbaechel::(anonymous namespace)::chip_tile_info(nextpnr_himbaechel::ChipInfoPOD const*, int) [clone .lto_priv.3] [clone .lto_priv.0]
+     1.91%  nextpnr-himbaec  nextpnr-himbaechel-xilinx  [.] nextpnr_himbaechel::Arch::getBelLocation(nextpnr_himbaechel::BelId) const
+     1.55%  nextpnr-himbaec  nextpnr-himbaechel-xilinx  [.] nextpnr_himbaechel::dict<nextpnr_himbaechel::IdString, std::unique_ptr<nextpnr_himbaechel::CellInfo, std::default_delete<nextpnr_himbaechel::CellInfo> >, nextpnr_himbaechel::hash_ops<nextpnr_himbaechel::IdString> >::do_lookup(nextpnr_himbaechel::IdString const&, int&) const
+     1.48%  nextpnr-himbaec  nextpnr-himbaechel-xilinx  [.] nextpnr_himbaechel::SAPlacer::try_swap_chain(nextpnr_himbaechel::CellInfo*, nextpnr_himbaechel::BelId) [clone .isra.0]
+     1.25%  nextpnr-himbaec  nextpnr-himbaechel-xilinx  [.] nextpnr_himbaechel::SAPlacer::random_bel_for_cell(nextpnr_himbaechel::CellInfo*, int)
+     0.99%  nextpnr-himbaec  nextpnr-himbaechel-xilinx  [.] nextpnr_himbaechel::XilinxImpl::getClusterPlacement(nextpnr_himbaechel::IdString, nextpnr_himbaechel::BelId, std::vector<std::pair<nextpnr_himbaechel::CellInfo*, nextpnr_himbaechel::BelId>, std::allocator<std::pair<nextpnr_himbaechel::CellInfo*, nextpnr_himbaechel::BelId> > >&) const
+     0.91%  nextpnr-himbaec  nextpnr-himbaechel-xilinx  [.] nextpnr_himbaechel::HimbaechelAPI::getPortTimingClass(nextpnr_himbaechel::CellInfo const*, nextpnr_himbaechel::IdString, int&) const
+     0.88%  nextpnr-himbaec  nextpnr-himbaechel-xilinx  [.] nextpnr_himbaechel::SAPlacer::try_swap_position(nextpnr_himbaechel::CellInfo*, nextpnr_himbaechel::BelId) [clone .isra.0]
+     0.79%  nextpnr-himbaec  nextpnr-himbaechel-xilinx  [.] nextpnr_himbaechel::SAPlacer::MoveChangeData::reset(nextpnr_himbaechel::SAPlacer*)
+     0.77%  nextpnr-himbaec  nextpnr-himbaechel-xilinx  [.] nextpnr_himbaechel::dict<nextpnr_himbaechel::IdString, nextpnr_himbaechel::BelId, nextpnr_himbaechel::hash_ops<nextpnr_himbaechel::IdString> >::operator[](nextpnr_himbaechel::IdString const&)
+     0.72%  nextpnr-himbaec  nextpnr-himbaechel-xilinx  [.] nextpnr_himbaechel::TimingAnalyser::walk_backward()
+     0.66%  nextpnr-himbaec  nextpnr-himbaechel-xilinx  [.] nextpnr_himbaechel::TimingAnalyser::walk_forward()
+     0.54%  nextpnr-himbaec  nextpnr-himbaechel-xilinx  [.] nextpnr_himbaechel::SAPlacer::get_net_bounds(nextpnr_himbaechel::NetInfo*) [clone .isra.0]
+     0.50%  nextpnr-himbaec  nextpnr-himbaechel-xilinx  [.] nextpnr_himbaechel::pool<nextpnr_himbaechel::BelId, nextpnr_himbaechel::hash_ops<nextpnr_himbaechel::BelId> >::insert(nextpnr_himbaechel::BelId const&)
+     0.48%  nextpnr-himbaec  nextpnr-himbaechel-xilinx  [.] nextpnr_himbaechel::TimingAnalyser::compute_slack()
+     0.48%  nextpnr-himbaec  nextpnr-himbaechel-xilinx  [.] nextpnr_himbaechel::XilinxImpl::is_logic_tile(nextpnr_himbaechel::BelId) const
+
+== router2 (16%-99%) ==
+# Samples: 552K of event 'armv8_pmuv3_0/cycles/P' (time slices: 16%-99%)
+    19.68%  nextpnr-himbaec  nextpnr-himbaechel-xilinx  [.] nextpnr_himbaechel::dict<nextpnr_himbaechel::WireId, int, nextpnr_himbaechel::hash_ops<nextpnr_himbaechel::WireId> >::do_lookup(nextpnr_himbaechel::WireId const&, int&) const
+    12.80%  nextpnr-himbaec  nextpnr-himbaechel-xilinx  [.] nextpnr_himbaechel::Arch::getPipDelay(nextpnr_himbaechel::PipId) const
+     7.16%  nextpnr-himbaec  nextpnr-himbaechel-xilinx  [.] nextpnr_himbaechel::dict<nextpnr_himbaechel::WireId, nextpnr_himbaechel::Loc, nextpnr_himbaechel::hash_ops<nextpnr_himbaechel::WireId> >::do_lookup(nextpnr_himbaechel::WireId const&, int&) const
+     6.96%  nextpnr-himbaec  nextpnr-himbaechel-xilinx  [.] nextpnr_himbaechel::XilinxImpl::is_pip_unavail(nextpnr_himbaechel::PipId) const
+     6.41%  nextpnr-himbaec  nextpnr-himbaechel-xilinx  [.] nextpnr_himbaechel::BaseArch<nextpnr_himbaechel::ArchRanges>::getBoundPipNet(nextpnr_himbaechel::PipId) const
+     6.27%  nextpnr-himbaec  nextpnr-himbaechel-xilinx  [.] nextpnr_himbaechel::(anonymous namespace)::Router2::score_wire_for_arc(nextpnr_himbaechel::NetInfo*, nextpnr_himbaechel::store_index<nextpnr_himbaechel::PortRef>, unsigned long, nextpnr_himbaechel::WireId, nextpnr_himbaechel::PipId, float) [clone .isra.0]
+     5.84%  nextpnr-himbaec  nextpnr-himbaechel-xilinx  [.] nextpnr_himbaechel::(anonymous namespace)::Router2::route_arc(nextpnr_himbaechel::(anonymous namespace)::Router2::ThreadContext&, nextpnr_himbaechel::NetInfo*, nextpnr_himbaechel::store_index<nextpnr_himbaechel::PortRef>, unsigned long, bool, bool) [clone .constprop.1]
+     4.13%  nextpnr-himbaec  nextpnr-himbaechel-xilinx  [.] nextpnr_himbaechel::(anonymous namespace)::Router2::route_arc(nextpnr_himbaechel::(anonymous namespace)::Router2::ThreadContext&, nextpnr_himbaechel::NetInfo*, nextpnr_himbaechel::store_index<nextpnr_himbaechel::PortRef>, unsigned long, bool, bool) [clone .constprop.0]
+     2.51%  nextpnr-himbaec  nextpnr-himbaechel-xilinx  [.] nextpnr_himbaechel::XilinxImpl::estimateDelay(nextpnr_himbaechel::WireId, nextpnr_himbaechel::WireId) const
+     2.27%  nextpnr-himbaec  nextpnr-himbaechel-xilinx  [.] nextpnr_himbaechel::Arch::normalise_wire(int, int) const
+     2.25%  nextpnr-himbaec  nextpnr-himbaechel-xilinx  [.] nextpnr_himbaechel::Arch::getPipsUphill(nextpnr_himbaechel::WireId) const [clone .lto_priv.0]
+     2.08%  nextpnr-himbaec  libstdc++.so.6.0.33        [.] std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> >::find(char const*, unsigned long, unsigned long) const
+     1.87%  nextpnr-himbaec  nextpnr-himbaechel-xilinx  [.] nextpnr_himbaechel::dict<nextpnr_himbaechel::WireId, std::pair<nextpnr_himbaechel::PipId, int>, nextpnr_himbaechel::hash_ops<nextpnr_himbaechel::WireId> >::do_lookup(nextpnr_himbaechel::WireId const&, int&) const
+     1.85%  nextpnr-himbaec  nextpnr-himbaechel-xilinx  [.] nextpnr_himbaechel::(anonymous namespace)::chip_wire_info(nextpnr_himbaechel::ChipInfoPOD const*, nextpnr_himbaechel::WireId) [clone .lto_priv.4] [clone .lto_priv.0]
+     1.65%  nextpnr-himbaec  nextpnr-himbaechel-xilinx  [.] nextpnr_himbaechel::(anonymous namespace)::chip_tile_info(nextpnr_himbaechel::ChipInfoPOD const*, int) [clone .lto_priv.3] [clone .lto_priv.0]
+     1.22%  nextpnr-himbaec  nextpnr-himbaechel-xilinx  [.] nextpnr_himbaechel::IdString::str[abi:cxx11](nextpnr_himbaechel::BaseCtx const*) const [clone .isra.0]
+     1.13%  nextpnr-himbaec  nextpnr-himbaechel-xilinx  [.] nextpnr_himbaechel::default_base_cost(nextpnr_himbaechel::Context*, nextpnr_himbaechel::WireId, nextpnr_himbaechel::PipId, float)
+     1.09%  nextpnr-himbaec  nextpnr-himbaechel-xilinx  [.] std::priority_queue<nextpnr_himbaechel::(anonymous namespace)::Router2::QueuedWire, std::vector<nextpnr_himbaechel::(anonymous namespace)::Router2::QueuedWire, std::allocator<nextpnr_himbaechel::(anonymous namespace)::Router2::QueuedWire> >, nextpnr_himbaechel::(anonymous namespace)::Router2::QueuedWire::Greater>::push(nextpnr_himbaechel::(anonymous namespace)::Router2::QueuedWire&&) [clone .lto_priv.0]
+     0.91%  nextpnr-himbaec  nextpnr-himbaechel-xilinx  [.] nextpnr_himbaechel::Arch::getPipSrcWire(nextpnr_himbaechel::PipId) const
+     0.91%  nextpnr-himbaec  nextpnr-himbaechel-xilinx  [.] nextpnr_himbaechel::(anonymous namespace)::chip_pip_info(nextpnr_himbaechel::ChipInfoPOD const*, nextpnr_himbaechel::PipId) [clone .lto_priv.0] [clone .lto_priv.0]
+     0.86%  nextpnr-himbaec  nextpnr-himbaechel-xilinx  [.] nextpnr_himbaechel::dict<nextpnr_himbaechel::WireId, int, nextpnr_himbaechel::hash_ops<nextpnr_himbaechel::WireId> >::at(nextpnr_himbaechel::WireId const&)
+     0.78%  nextpnr-himbaec  nextpnr-himbaechel-xilinx  [.] std::_Function_handler<float (nextpnr_himbaechel::Context*, nextpnr_himbaechel::WireId, nextpnr_himbaechel::PipId, float), float (*)(nextpnr_himbaechel::Context*, nextpnr_himbaechel::WireId, nextpnr_himbaechel::PipId, float)>::_M_invoke(std::_Any_data const&, nextpnr_himbaechel::Context*&&, nextpnr_himbaechel::WireId&&, nextpnr_himbaechel::PipId&&, float&&)
+     0.73%  nextpnr-himbaec  nextpnr-himbaechel-xilinx  [.] nextpnr_himbaechel::Arch::getPipsDownhill(nextpnr_himbaechel::WireId) const [clone .lto_priv.0]
+     0.71%  nextpnr-himbaec  nextpnr-himbaechel-xilinx  [.] nextpnr_himbaechel::dict<nextpnr_himbaechel::WireId, std::pair<nextpnr_himbaechel::PipId, int>, nextpnr_himbaechel::hash_ops<nextpnr_himbaechel::WireId> >::count(nextpnr_himbaechel::WireId const&) const
+     0.62%  nextpnr-himbaec  nextpnr-himbaechel-xilinx  [.] nextpnr_himbaechel::XilinxImpl::delay_matrix_lookup(int, int) const
+     0.56%  nextpnr-himbaec  nextpnr-himbaechel-xilinx  [.] nextpnr_himbaechel::Arch::getPipDstWire(nextpnr_himbaechel::PipId) const
+     0.50%  nextpnr-himbaec  nextpnr-himbaechel-xilinx  [.] bool boost::algorithm::starts_with<std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> >, char [5], boost::algorithm::is_equal>(std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> > const&, char const (&) [5], boost::algorithm::is_equal) [clone .isra.0]
+     0.49%  nextpnr-himbaec  nextpnr-himbaechel-xilinx  [.] std::priority_queue<nextpnr_himbaechel::(anonymous namespace)::Router2::QueuedWire, std::vector<nextpnr_himbaechel::(anonymous namespace)::Router2::QueuedWire, std::allocator<nextpnr_himbaechel::(anonymous namespace)::Router2::QueuedWire> >, nextpnr_himbaechel::(anonymous namespace)::Router2::QueuedWire::Greater>::pop() [clone .lto_priv.0]
+     0.49%  nextpnr-himbaec  nextpnr-himbaechel-xilinx  [.] nextpnr_himbaechel::(anonymous namespace)::Router2::get_togo_cost(nextpnr_himbaechel::NetInfo*, nextpnr_himbaechel::store_index<nextpnr_himbaechel::PortRef>, int, nextpnr_himbaechel::WireId, bool, float) [clone .constprop.0] [clone .isra.0]
+     0.41%  nextpnr-himbaec  nextpnr-himbaechel-xilinx  [.] void std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> >::_M_construct<char const*>(char const*, char const*, std::forward_iterator_tag)

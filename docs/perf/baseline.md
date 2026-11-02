@@ -25,6 +25,16 @@ B1 exit 1 is solely the 100 MHz timing failure. It produced report and FASM outp
 
 The current B1 input did not reproduce the previously observed overuse plateau near iteration 700. Overuse fell from 16,093 at iteration 1 to zero at iteration 91. Do not attribute a speedup to fixing that plateau until it is reproduced with a recorded command and input hash. Router2 nevertheless dominates B1 at 82.8% of wall time.
 
-## Profiling
+## B1 profiling build
 
-The instrumented build uses `Release` with `-O2 -g -fno-omit-frame-pointer`; the reference chipdb is loaded with `--chipdb`. Whole-run and per-phase profile tables are pending. Profiling timings are diagnostic and are not used for optimized-binary speedup claims.
+The instrumented build uses `Release` with `-O2 -g -fno-omit-frame-pointer`; the reference chipdb is loaded with `--chipdb`. Raw results are under `$BENCH_RESULTS/20261102T213200Z-nextpnr-perf-lane-base-b1-t1-perf`. Profiling timings are diagnostic and are not used for optimized-binary speedup claims.
+
+| Exit | Wall (s) | Max RSS (KiB) | Analytic iterations time (s) | SA (s) | Router2 (s) | Final Fmax (MHz) | Final router iteration |
+|---|---:|---:|---:|---:|---:|---:|---:|
+| 1 (timing) | 671.59 | 1,471,396 | 48.26 | 54.32 | 557.15 | 41.83 | 91 |
+
+The profiling and reference reports have identical Fmax and utilization. Their FASM payload after the version header is byte-identical (SHA-256 `45c231cca7f541233e2a98f318860ac62cfb31683ae9e0ec64b769a196f0db0f`); only the version string differs. Compatibility builds will set `CURRENT_GIT_VERSION=d56c470f` so full-file byte comparison includes the header.
+
+`baseline-b1-profile-top30.txt` records the top 30 self-time symbols for the whole run, analytic placement (0–8% of samples), simulated annealing (8–16%), and router2 (16–99%). The capture used `perf record -F999 -g` and had zero lost samples. Whole-run leaders are `dict<WireId,int>::do_lookup` (16.52%), `Arch::getPipDelay` (10.78%), `dict<WireId,Loc>::do_lookup` (5.96%), `is_pip_unavail` (5.80%), `getBoundPipNet` (5.35%), and `Router2::score_wire_for_arc` (5.23%). Within the router window their shares are 19.68%, 12.80%, 7.16%, 6.96%, 6.41%, and 6.27%, respectively. This directly supports removing duplicate base-cost/delay lookups and net-wire double lookups before considering algorithmic changes.
+
+B2 instrumented profiling is running separately under `$BENCH_RESULTS/20261102T214200Z-nextpnr-perf-lane-base-b2-t1-perf`.
