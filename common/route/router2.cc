@@ -323,6 +323,12 @@ struct Router2
         };
     };
 
+    struct WireQueue : std::priority_queue<QueuedWire, std::vector<QueuedWire>, QueuedWire::Greater>
+    {
+        void clear() { this->c.clear(); }
+        void reserve(size_t capacity) { this->c.reserve(capacity); }
+    };
+
     bool hit_test_pip(BoundingBox &bb, Loc l) { return l.x >= bb.x0 && l.x <= bb.x1 && l.y >= bb.y0 && l.y <= bb.y1; }
 
     double curr_cong_weight, hist_cong_weight, estimate_weight;
@@ -336,7 +342,12 @@ struct Router2
 
         std::vector<std::pair<store_index<PortRef>, size_t>> route_arcs;
 
-        std::priority_queue<QueuedWire, std::vector<QueuedWire>, QueuedWire::Greater> fwd_queue, bwd_queue;
+        WireQueue fwd_queue, bwd_queue;
+        void reserve_queues(size_t capacity)
+        {
+            fwd_queue.reserve(capacity);
+            bwd_queue.reserve(capacity);
+        }
         // Special case where one net has multiple logical arcs to the same physical sink
         pool<WireId> processed_sinks;
 
@@ -886,15 +897,9 @@ struct Router2
         int explored = 1;
 
         for (; mode < 2; mode++) {
-            // Clear out the queues
-            if (!t.fwd_queue.empty()) {
-                std::priority_queue<QueuedWire, std::vector<QueuedWire>, QueuedWire::Greater> new_queue;
-                t.fwd_queue.swap(new_queue);
-            }
-            if (!t.bwd_queue.empty()) {
-                std::priority_queue<QueuedWire, std::vector<QueuedWire>, QueuedWire::Greater> new_queue;
-                t.bwd_queue.swap(new_queue);
-            }
+            // Clear out the queues without releasing their capacity
+            t.fwd_queue.clear();
+            t.bwd_queue.clear();
             // Unvisit any previously visited wires
             reset_wires(t);
 
@@ -1678,6 +1683,7 @@ struct Router2
         if (route_queue.size() < 200) {
             ThreadContext st;
             st.rng.rngseed(ctx->rng64());
+            st.reserve_queues(flat_wires.size());
             st.bb = BoundingBox(0, 0, std::numeric_limits<int>::max(), std::numeric_limits<int>::max());
             for (size_t j = 0; j < route_queue.size(); j++) {
                 route_net(st, nets_by_udata[route_queue[j]], false);
@@ -1689,6 +1695,7 @@ struct Router2
         std::vector<ThreadContext> tcs(N + 1);
         for (auto &th : tcs) {
             th.rng.rngseed(ctx->rng64());
+            th.reserve_queues(flat_wires.size());
         }
         int le_x = mid_x;
         int rs_x = mid_x;
