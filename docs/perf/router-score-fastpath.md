@@ -34,4 +34,18 @@ The unpatched and patched Release builds ran sequentially on the same CPU core. 
 
 The complete parsed report JSON (utilization, Fmax, and critical paths) is identical. The complete FASM files are byte-identical, with SHA-256 `2edc647dfcb849ccb35eb6e3a59f480221684c60db92c5740b0acc4d906cbd05`. The untouched SA phase also varied, so this is a single-pair measurement rather than a noise-bound estimate; the router phase supplies the largest absolute saving.
 
-B2 validation is pending.
+## B2 results
+
+| Metric | Unpatched | Patched | Change |
+| --- | ---: | ---: | ---: |
+| Wall time | 2666.79 s | 2563.22 s | -3.88% |
+| CPU user time | 2664.28 s | 2560.66 s | -3.89% |
+| Maximum RSS | 2,292,292 KiB | 2,292,440 KiB | +0.01% |
+| Analytic iteration time sum | 848.26 s | 857.44 s | +1.08% |
+| SA placement time | 262.62 s | 269.16 s | +2.49% |
+| Router2 time | 1519.09 s | 1400.03 s | -7.84% |
+| Router iterations | 20 | 20 | unchanged |
+| Post-place Fmax | 36.24 MHz | 36.24 MHz | unchanged |
+| Final Fmax | 31.76 MHz | 31.76 MHz | unchanged |
+
+Both exits were timing-only. Report JSON is identical and complete FASM is byte-identical, with SHA-256 `5464b504d810fdc3b50d6ee3f87e51f0a20cf1a16025cd5ec747951e4dd1f97b`. A separate queue-candidate B1 validation overlapped part of the patched placement phase, so the wall and placement figures are conservative single-pair measurements; that validation had finished before patched Router2 started. The Router2 saving is consistent with B1 and the patch is accepted on this branch.
