@@ -74,6 +74,7 @@ TEST_F(XilinxBelBucketTest, bel_bucket_names_the_primitive)
     bool found_repeated_bel = false, found_plain_bel = false;
     for (auto bel : ctx->getBels()) {
         IdString bel_type = ctx->getBelType(bel);
+        EXPECT_EQ(ctx->getBelBucketForBel(bel), ctx->getBelBucketForCellType(bel_type));
         if (bel_type == id_RAMB18E1_RAMB18E1) {
             EXPECT_EQ(ctx->getBelBucketForBel(bel), id_RAMB18E1);
             found_repeated_bel = true;

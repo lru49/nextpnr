@@ -267,6 +267,9 @@ struct XilinxImpl : HimbaechelAPI
     // Bel types (bel_type -> primitive name) whose chipdb name repeats the
     // primitive; lookups happen per cell on the placer's hot path.
     dict<IdString, IdString> primitive_bucket_for_bel_type;
+    // Resolved buckets indexed like the chipdb's tile/bel arrays, avoiding a
+    // bel-type lookup and dictionary search on the placer's hot path.
+    std::vector<std::vector<IdString>> bel_bucket_by_tile;
     void assign_cell_tags();
     void index_control_sets();
 };

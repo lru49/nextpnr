@@ -187,6 +187,15 @@ void XilinxImpl::init(Context *ctx)
             primitive_bucket_for_bel_type.emplace(bel_type, primitive_name);
     }
 
+    bel_bucket_by_tile.resize(ctx->chip_info->tile_insts.size());
+    for (int tile = 0; tile < ctx->chip_info->tile_insts.ssize(); tile++) {
+        const auto &tile_data = chip_tile_info(ctx->chip_info, tile);
+        auto &tile_buckets = bel_bucket_by_tile[tile];
+        tile_buckets.resize(tile_data.bels.size());
+        for (int index = 0; index < tile_data.bels.ssize(); index++)
+            tile_buckets[index] = getBelBucketForCellType(ctx->getBelType(BelId(tile, index)));
+    }
+
     tile_status.resize(ctx->chip_info->tile_insts.size());
     for (int i = 0; i < ctx->chip_info->tile_insts.ssize(); i++) {
         auto extra_data = tile_extra_data(i);
@@ -203,7 +212,14 @@ IdString XilinxImpl::getBelBucketForCellType(IdString cell_type) const
 
 IdString XilinxImpl::getBelBucketForBel(BelId bel) const
 {
-    return getBelBucketForCellType(ctx->getBelType(bel));
+    // Keep the original access as the fallback for invalid/default BelIds (and
+    // for calls before init), including its assertion behavior.
+    if (bel.tile < 0 || size_t(bel.tile) >= bel_bucket_by_tile.size())
+        return getBelBucketForCellType(ctx->getBelType(bel));
+    const auto &tile_buckets = bel_bucket_by_tile[bel.tile];
+    if (bel.index < 0 || size_t(bel.index) >= tile_buckets.size())
+        return getBelBucketForCellType(ctx->getBelType(bel));
+    return tile_buckets[bel.index];
 }
 
 SiteIndex XilinxImpl::get_bel_site(BelId bel) const
