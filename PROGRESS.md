@@ -184,3 +184,8 @@ Append-only record. Times are UTC.
 
 ## 2026-11-03T23:36Z — placer B2 heartbeat
 - At about 29 minutes all four B2 processes remain at 100% CPU under their 8460 s caps. Placement has completed in both pairs: r1 HeAP 667.88 -> 637.35 s (-4.5709%), SA 315.58 -> 316.07 s (+0.1553%); r2 HeAP 662.99 -> 633.05 s (-4.5160%), SA 313.14 -> 313.29 s (+0.0479%). Both candidate/reference pairs report identical router iteration-1 history (`983711` wires, `47939` overused, `51791` overuse); routing and final identity gates remain pending.
+
+## 2026-11-03T23:56Z — directive acknowledgement
+- ACK 2026-11-03T22:52Z lane: collecting the untouched placer B2 repeats against reference 9a83eaa0 and keeping reject-first B2 r2 and cumulative ed9af634 abandoned; no replacement launch on cores 4/5 or 28/29.
+- ACK 2026-11-03T23:22Z lane: preserving the placer B2 reference 9a83eaa0 and its original input SHA, and starting/collecting router-pip-location-reuse B1 r1/r2 on cores 4-7 only through the existing chained launcher, with no pip B2 before both identity gates pass.
+- ACK 2026-11-03T23:52Z lane: deriving the tier-2 QoR/FASM-diff tables for pip-binding 9299e4be and reject-first 05231767 from existing reports, creating and pushing the annotated baseline tag, and collecting placer B2 plus the chained pip B1 runs without duplication.
