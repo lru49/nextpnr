@@ -138,3 +138,4 @@ Append-only record. Times are UTC.
 | Flat WireId index | 578.45 -> 492.63 | 2662.71 -> 2399.76 | none | yes | accepted on topic branch |
 | Router stack 9a83eaa0 | 613.96 -> 480.17 | 3481.06 -> 2855.96 | none | yes | accepted on topic branch |
 | Pip-binding stack 9299e4be | running | running | pending | pending | batch 2 running |
+- Live at 19:56Z: batch-2 driver pid 9813, all twelve runs started 19:54:53Z after the exact B1 SHA-256 guard passed and no other nextpnr jobs were running (477 GiB free). B1 candidate/reference nextpnr pids: r1 9914/9913 cores 12/13, r2 9911/9918 cores 14/15, r3 9922/9925 cores 16/17. B2 candidate/reference: r1 9924/9920 cores 18/19, r2 9921/9926 cores 20/21, r3 9923/9919 cores 22/23. Every process was 99.9-100% CPU at the 60-second check with the declared one-core affinity; concurrency is 12.
