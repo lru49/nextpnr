@@ -217,15 +217,27 @@ struct Router2
         }
     }
 
+#ifdef ARCH_HIMBAECHEL
     std::vector<int> tile_wire_offsets;
     std::vector<int> wire_to_idx;
+#else
+    dict<WireId, int> wire_to_idx;
+#endif
     std::vector<PerWireData> flat_wires;
 
-    int wire_index(WireId w) const { return wire_to_idx.at(tile_wire_offsets[w.tile] + w.index); }
+    int wire_index(WireId w) const
+    {
+#ifdef ARCH_HIMBAECHEL
+        return wire_to_idx.at(tile_wire_offsets[w.tile] + w.index);
+#else
+        return wire_to_idx.at(w);
+#endif
+    }
     PerWireData &wire_data(WireId w) { return flat_wires[wire_index(w)]; }
 
     void setup_wire_index()
     {
+#ifdef ARCH_HIMBAECHEL
         int tile_count = 0;
         for (auto wire : ctx->getWires()) {
             NPNR_ASSERT(wire.tile >= 0 && wire.index >= 0);
@@ -243,6 +255,7 @@ struct Router2
             wire_count += tile_wire_sizes[tile];
         }
         wire_to_idx.assign(wire_count, -1);
+#endif
     }
 
     void setup_wires()
@@ -278,7 +291,11 @@ struct Router2
             pwd.x = (wire_loc.x0 + wire_loc.x1) / 2;
             pwd.y = (wire_loc.y0 + wire_loc.y1) / 2;
 
+#ifdef ARCH_HIMBAECHEL
             wire_to_idx.at(tile_wire_offsets[wire.tile] + wire.index) = int(flat_wires.size());
+#else
+            wire_to_idx[wire] = int(flat_wires.size());
+#endif
             flat_wires.push_back(pwd);
         }
 
