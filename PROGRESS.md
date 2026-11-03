@@ -52,3 +52,16 @@ Append-only record. Times are UTC.
 - `d538000d` wall 578.45 -> 492.63 s (-14.84%); Router2 480.84 -> 395.47 s (-17.75%); maximum RSS 1,471,088 -> 1,268,560 KiB (-13.77%).
 - Router iterations (91), post-place/final Fmax (51.00/41.83 MHz), report JSON, and complete FASM are unchanged.
 - B1 results committed as `0611ad3c`; sequential B2 validation is running on core 24.
+
+## 2026-11-03 01:40 — Flat WireId index passes B2
+- `d538000d` wall 2662.71 -> 2399.76 s (-9.88%); Router2 1521.34 -> 1260.58 s (-17.14%); maximum RSS 2,292,424 -> 2,106,284 KiB (-8.12%).
+- Router iterations (20), post-place/final Fmax (36.24/31.76 MHz), report JSON, and complete FASM are unchanged. FASM SHA-256: `5464b504d810fdc3b50d6ee3f87e51f0a20cf1a16025cd5ec747951e4dd1f97b`.
+- B1/B2 results committed as `ddd6a509`; the candidate is accepted on `perf/router-wire-index`.
+
+## 2026-11-03 01:40 — Updated optimization summary
+| Change | B1 wall (s) | B2 wall (s) | QoR delta | FASM identical | Status |
+| --- | ---: | ---: | --- | :---: | --- |
+| Reference baseline | 623.63 | 2814.37 | baseline | n/a | measured concurrently |
+| Router scoring fast path | 602.19 -> 553.27 | 2666.79 -> 2563.22 | none | yes | accepted on topic branch |
+| Router queue capacity | 603.82 -> 628.03 | not run | none | yes | abandoned: runtime regression |
+| Flat WireId index | 578.45 -> 492.63 | 2662.71 -> 2399.76 | none | yes | accepted on topic branch |
