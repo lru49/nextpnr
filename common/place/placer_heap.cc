@@ -1199,15 +1199,16 @@ class HeAPPlacer
                     ctrl_set = p->cfg.get_cell_control_set(ctx, ci);
                 }
                 if (ctrl_set != -1) {
+                    const auto &cell_loc = p->cell_locs.at(ci->name);
                     int nonempty = 0;
                     int ctrl_set_radius = p->cfg.ctrl_set_max_radius.at(
                             std::min(p->iter, int(p->cfg.ctrl_set_max_radius.size()) - 1));
                     auto candidates =
-                            p->find_control_set_candidates(p->cell_locs.at(ci->name).x, p->cell_locs.at(ci->name).y,
+                            p->find_control_set_candidates(cell_loc.x, cell_loc.y,
                                                            ctrl_set, ctrl_set_radius, nonempty);
                     // log_info("%s %d/%d %d (%d, %d)\n", ci->name.c_str(ctx), int(candidates.size()), nonempty,
                     // ctrl_set,
-                    //    int(p->cell_locs.at(ci->name).x), int(p->cell_locs.at(ci->name).y));
+                    //    int(cell_loc.x), int(cell_loc.y));
                     for (auto loc : candidates) {
 
                         if (ci->cluster == ClusterId()) {
@@ -1236,17 +1237,18 @@ class HeAPPlacer
                 iter++;
                 iter_at_radius++;
                 if (iter >= (10 * (radius + 1))) {
+                    const auto &cell_loc = p->cell_locs.at(ci->name);
                     // No luck yet, increase radius
                     radius = std::min(std::max(p->max_x, p->max_y), radius + 1);
                     while (radius < std::max(p->max_x, p->max_y)) {
                         // Keep increasing the radius until it will actually increase the number of cells we are
                         // checking (e.g. BRAM and DSP will not be in all cols/rows), so we don't waste effort
-                        for (int x = std::max(0, p->cell_locs.at(ci->name).x - radius);
-                             x <= std::min(p->max_x, p->cell_locs.at(ci->name).x + radius); x++) {
+                        for (int x = std::max(0, cell_loc.x - radius);
+                             x <= std::min(p->max_x, cell_loc.x + radius); x++) {
                             if (x >= int(fb->size()))
                                 break;
-                            for (int y = std::max(0, p->cell_locs.at(ci->name).y - radius);
-                                 y <= std::min(p->max_y, p->cell_locs.at(ci->name).y + radius); y++) {
+                            for (int y = std::max(0, cell_loc.y - radius);
+                                 y <= std::min(p->max_y, cell_loc.y + radius); y++) {
                                 if (y >= int(fb->at(x).size()))
                                     break;
                                 if (fb->at(x).at(y).size() > 0)
@@ -1324,12 +1326,13 @@ class HeAPPlacer
 
         std::pair<int, int> pick_random_loc_for_cell(CellInfo *ci)
         {
+            const auto &cell_loc = p->cell_locs.at(ci->name);
             // Determine a search radius around the solver location (which increases over time) that is clamped to
             // the region constraint for the cell (if applicable)
-            int x0 = std::max(p->cell_locs.at(ci->name).x - radius, 0);
-            int y0 = std::max(p->cell_locs.at(ci->name).y - radius, 0);
-            int x1 = p->cell_locs.at(ci->name).x + radius;
-            int y1 = p->cell_locs.at(ci->name).y + radius;
+            int x0 = std::max(cell_loc.x - radius, 0);
+            int y0 = std::max(cell_loc.y - radius, 0);
+            int x1 = cell_loc.x + radius;
+            int y1 = cell_loc.y + radius;
 
             if (ci->region != nullptr) {
                 auto &r = p->constraint_region_bounds[ci->region->name];
