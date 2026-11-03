@@ -588,6 +588,8 @@ struct Arch : BaseArch<ArchRanges>
     }
     DelayQuad getPipDelay(PipId pip) const override
     {
+        if (fast_pip_delays && fast_pip_delay_cache_ready)
+            return DelayQuad(fast_pip_delay_cache[tile_pip_offsets[pip.tile] + pip.index]);
         auto &pip_data = chip_pip_info(chip_info, pip);
         auto pip_tmg = get_pip_timing(pip_data);
         if (pip_tmg != nullptr) {
@@ -897,6 +899,7 @@ struct Arch : BaseArch<ArchRanges>
     // -------------------------------------------------
     void init_tiles();
     void set_fast_pip_delays(bool fast_mode);
+    void build_fast_pip_delay_cache();
     std::vector<IdString> tile_name;
     dict<IdString, int> tile_name2idx;
 
@@ -911,6 +914,11 @@ struct Arch : BaseArch<ArchRanges>
     bool fast_pip_delays = false;
     dict<WireId, uint64_t> drive_res;
     dict<WireId, uint64_t> load_cap;
+    // Fast-mode pip delays depend only on immutable timing data. Cache them
+    // once before routing instead of repeating the timing-tree walks.
+    bool fast_pip_delay_cache_ready = false;
+    std::vector<int> tile_pip_offsets;
+    std::vector<delay_t> fast_pip_delay_cache;
 
     delay_t ripup_penalty = 120;
 };

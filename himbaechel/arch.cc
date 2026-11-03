@@ -467,6 +467,26 @@ void Arch::set_fast_pip_delays(bool fast_mode)
         }
     }
     fast_pip_delays = fast_mode;
+    if (fast_mode && fast_pip_delay_cache.empty())
+        build_fast_pip_delay_cache();
+}
+
+void Arch::build_fast_pip_delay_cache()
+{
+    NPNR_ASSERT(fast_pip_delays);
+    NPNR_ASSERT(fast_pip_delay_cache.empty());
+    const int num_tiles = chip_info->tile_insts.ssize();
+    tile_pip_offsets.resize(num_tiles + 1);
+    int pip_count = 0;
+    for (int tile = 0; tile < num_tiles; ++tile) {
+        tile_pip_offsets[tile] = pip_count;
+        pip_count += chip_tile_info(chip_info, tile).pips.ssize();
+    }
+    tile_pip_offsets[num_tiles] = pip_count;
+    fast_pip_delay_cache.resize(pip_count);
+    for (auto pip : getPips())
+        fast_pip_delay_cache[tile_pip_offsets[pip.tile] + pip.index] = getPipDelay(pip).maxDelay();
+    fast_pip_delay_cache_ready = true;
 }
 
 // Helper for cell timing lookups
