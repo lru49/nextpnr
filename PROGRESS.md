@@ -74,3 +74,7 @@ Append-only record. Times are UTC.
 - ACK 2026-11-03T14:09Z lane: started batch 1 at 14:15:20Z with B1 router stack on reference/candidate cores 0/1, B2 router stack on 2/3, B1 wire-location index on 4/5, B1 bel-bucket index on 6/7, B1 pip-binding index on 8/9, and B1 pip-availability cache on 10/11; all runs use seed 1, one thread, 100 MHz, per-run metadata, and the prescribed 1920/8460-second timeouts.
 - ACK orchestrator notes 2026-11-03T13:30Z and 2026-11-03T13:59Z lane: retained the canonical append-only progress log and detached pid-based benchmark records, and am pushing every candidate branch tip.
 - ACK 2026-11-03T14:40Z lane: acknowledging the 14:09Z batch-1 block above; batch 1 remains on its launched core layout and reference `d56c470f`, with no mid-batch changes and process control by pid only.
+
+## 2026-11-03T15:38Z — supervisor relaunch recovery
+- ACK 2026-11-03T15:07Z lane: batch 1 has no live pids; I am relaunching the six pairs on cores 0-11 with 1920/8460-second timeouts, per-run FASM and QoR gates, and progress updates at least every 30 minutes.
+- ACK 2026-11-03T15:37Z lane: committing the canonical progress first, then starting B1/B2 router stack, B1 wire-location index, B1 bel-bucket index, B1 pip-binding index, and B1 pip-availability cache as six detached candidate/baseline pairs on cores 0-11; checking every pid after 60 seconds.
