@@ -181,3 +181,6 @@ Append-only record. Times are UTC.
 ## 2026-11-03T23:16Z — next independent router candidate prepared
 - An independent subagent created, built and pushed `perf/router-pip-location-reuse` at `02411403c8b8ab8ecba0279802a20b6121fe0581` over `9a83eaa0`. It reuses one immutable pip `Loc` for bounding-box testing, bias and smoothing, retaining the former lookup immediately before scoring in non-bounding-box mode and leaving all filters, scoring expressions and queue operations in place. Release build 63/63 and version smoke passed; the worktree is clean. No performance claim yet: its B1/B2 pairs wait until the active placer B2 repeats finish, avoiding mid-run concurrency changes.
 - Placer B2 r1/r2 remain active on cores 0-3 with nextpnr pids 7650/7651 and 7652/7649 respectively; all were at 100% CPU after the 60-second launch check.
+
+## 2026-11-03T23:36Z — placer B2 heartbeat
+- At about 29 minutes all four B2 processes remain at 100% CPU under their 8460 s caps. Placement has completed in both pairs: r1 HeAP 667.88 -> 637.35 s (-4.5709%), SA 315.58 -> 316.07 s (+0.1553%); r2 HeAP 662.99 -> 633.05 s (-4.5160%), SA 313.14 -> 313.29 s (+0.0479%). Both candidate/reference pairs report identical router iteration-1 history (`983711` wires, `47939` overused, `51791` overuse); routing and final identity gates remain pending.
