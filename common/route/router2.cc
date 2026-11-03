@@ -1018,17 +1018,6 @@ struct Router2
                             continue;
                         WireId next = ctx->getPipDstWire(dh);
                         int next_idx = wire_index(next);
-                        WireScore next_score;
-                        float base_cost = cfg.get_base_cost(ctx, next, dh, crit_weight);
-                        next_score.delay = curr.score.delay + base_cost;
-                        next_score.cost = curr.score.cost + score_wire_for_arc(net, i, phys_pin, next, dh,
-                                                                               flat_wires.at(next_idx), base_cost, crit_weight);
-                        next_score.togo_cost =
-                                cfg.estimate_weight * get_togo_cost(net, i, next_idx, dst_wire, false, crit_weight);
-                        if (was_visited_fwd(next_idx, next_score.delay)) {
-                            // Don't expand the same node twice.
-                            continue;
-                        }
                         auto &nwd = flat_wires.at(next_idx);
                         if (nwd.unavailable)
                             continue;
@@ -1049,6 +1038,17 @@ struct Router2
                         }
                         if (!thread_test_wire(t, nwd))
                             continue; // thread safety issue
+                        WireScore next_score;
+                        float base_cost = cfg.get_base_cost(ctx, next, dh, crit_weight);
+                        next_score.delay = curr.score.delay + base_cost;
+                        if (was_visited_fwd(next_idx, next_score.delay)) {
+                            // Don't expand the same node twice.
+                            continue;
+                        }
+                        next_score.cost = curr.score.cost + score_wire_for_arc(net, i, phys_pin, next, dh, nwd,
+                                                                               base_cost, crit_weight);
+                        next_score.togo_cost =
+                                cfg.estimate_weight * get_togo_cost(net, i, next_idx, dst_wire, false, crit_weight);
                         set_visited_fwd(t, next_idx, dh, next_score.delay);
                         t.fwd_queue.push(QueuedWire(next_idx, next_score, t.rng.rng()));
                     }
@@ -1095,19 +1095,6 @@ struct Router2
                             continue;
                         WireId next = ctx->getPipSrcWire(uh);
                         int next_idx = wire_index(next);
-                        WireScore next_score;
-                        float base_cost = cfg.get_base_cost(ctx, next, uh, crit_weight);
-                        next_score.delay = curr.score.delay + base_cost;
-                        next_score.cost = curr.score.cost + score_wire_for_arc(net, i, phys_pin, next, uh,
-                                                                               flat_wires.at(next_idx), base_cost, crit_weight);
-                        next_score.togo_cost = const_mode
-                                                       ? 0
-                                                       : cfg.estimate_weight * get_togo_cost(net, i, next_idx, src_wire,
-                                                                                             true, crit_weight);
-                        if (was_visited_bwd(next_idx, next_score.delay)) {
-                            // Don't expand the same node twice.
-                            continue;
-                        }
                         auto &nwd = flat_wires.at(next_idx);
                         if (nwd.unavailable)
                             continue;
@@ -1124,6 +1111,19 @@ struct Router2
                         }
                         if (!thread_test_wire(t, nwd))
                             continue; // thread safety issue
+                        WireScore next_score;
+                        float base_cost = cfg.get_base_cost(ctx, next, uh, crit_weight);
+                        next_score.delay = curr.score.delay + base_cost;
+                        if (was_visited_bwd(next_idx, next_score.delay)) {
+                            // Don't expand the same node twice.
+                            continue;
+                        }
+                        next_score.cost = curr.score.cost + score_wire_for_arc(net, i, phys_pin, next, uh, nwd,
+                                                                               base_cost, crit_weight);
+                        next_score.togo_cost = const_mode
+                                                       ? 0
+                                                       : cfg.estimate_weight * get_togo_cost(net, i, next_idx, src_wire,
+                                                                                             true, crit_weight);
                         set_visited_bwd(t, next_idx, uh, next_score.delay);
                         t.bwd_queue.push(QueuedWire(next_idx, next_score, t.rng.rng()));
                     }
