@@ -47,3 +47,8 @@ Append-only record. Times are UTC.
 | Router scoring fast path | 602.19 -> 553.27 | 2666.79 -> 2563.22 | none | yes | accepted on topic branch |
 | Router queue capacity | 603.82 -> 628.03 | not run | none | yes | abandoned: runtime regression |
 | Flat WireId index | running | pending | pending | pending | validation running |
+
+## 2026-11-03 00:25 — Flat WireId index passes B1
+- `d538000d` wall 578.45 -> 492.63 s (-14.84%); Router2 480.84 -> 395.47 s (-17.75%); maximum RSS 1,471,088 -> 1,268,560 KiB (-13.77%).
+- Router iterations (91), post-place/final Fmax (51.00/41.83 MHz), report JSON, and complete FASM are unchanged.
+- B1 results committed as `0611ad3c`; sequential B2 validation is running on core 24.
