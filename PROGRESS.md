@@ -69,3 +69,8 @@ Append-only record. Times are UTC.
 ## 2026-11-03T12:46Z — directive acknowledgement and recovery
 - ACK 2026-11-03T11:56Z lane: recovered the canonical progress and am preparing the stacked accepted candidates and four profile-driven B1 candidates for six core-pinned pairs with 3x timeouts and per-pair FASM gates.
 - Pip-delay-cache B1: abandoned: runtime > 3x reference. Stored pair `20261103T091100Z-b1-pip-pair` records candidate exit 143 after the 32-minute timeout; no nextpnr process remains in this lane namespace. Do not rerun this candidate.
+
+## 2026-11-03T14:56Z — parallel-pair directive acknowledgements
+- ACK 2026-11-03T14:09Z lane: started batch 1 at 14:15:20Z with B1 router stack on reference/candidate cores 0/1, B2 router stack on 2/3, B1 wire-location index on 4/5, B1 bel-bucket index on 6/7, B1 pip-binding index on 8/9, and B1 pip-availability cache on 10/11; all runs use seed 1, one thread, 100 MHz, per-run metadata, and the prescribed 1920/8460-second timeouts.
+- ACK orchestrator notes 2026-11-03T13:30Z and 2026-11-03T13:59Z lane: retained the canonical append-only progress log and detached pid-based benchmark records, and am pushing every candidate branch tip.
+- ACK 2026-11-03T14:40Z lane: acknowledging the 14:09Z batch-1 block above; batch 1 remains on its launched core layout and reference `d56c470f`, with no mid-batch changes and process control by pid only.
