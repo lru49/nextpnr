@@ -125,3 +125,16 @@ Append-only record. Times are UTC.
 - Decision: the restored calibration satisfies the intended host-comparability gate. Its exit 1 is solely the expected 100 MHz timing failure, identical to the documented 623.63 s reference, with normal routing completion, complete report/FASM and W=599.16 s; treating that expected application status as a failed calibration would make every valid B1 run fail the literal exit-0 condition. Timeout exits 124/137/143 remain failures.
 - Starting the single B1 router-stack pair now: candidate 9a83eaa0 on core 2 versus reference d56c470f on core 3, same-second launch, concurrency 2, cap 1920 s, original-input SHA guard and per-run FASM/QoR comparison. Batch 2 remains held until both walls finish below 1920 s.
 - Live at 19:19Z: driver pid 698; both runs started 19:18:03Z. Candidate nextpnr pid 716 has exactly core-2 affinity and reference nextpnr pid 713 exactly core-3 affinity; both were 99.9% CPU at the 60-second check, concurrency 2, with 478 GiB free before launch. Input hash guard passed.
+- Result at 19:28Z: B1 router stack candidate/reference on cores 2/3, concurrency 2: wall 480.17/613.96 s (-21.7913%), Router2 372.65/505.60 s (-26.2955%), peak RSS 1,267,792/1,472,128 KiB (-13.8803%), expected timing-only exit 1/1. Both walls passed the 1920 s gate. Router iteration 91, final Fmax 41.83 MHz, report bytes, router history, checksums and complete FASM are identical; FASM SHA-256 `2edc647dfcb849ccb35eb6e3a59f480221684c60db92c5740b0acc4d906cbd05`. Combined with the valid B2 result above, the stack is ACCEPTED on `perf/router-stack` 9a83eaa0.
+- Independent audit during the pair: pip-binding 9299e4be itself has no identified Xilinx semantic/bounds/lifetime defect and its smoke test passes, but its inherited flat-wire code needs the non-Himbaechel guard already landed as 9a83eaa0 before any merge. Its result versus d56c470f is cumulative stack attribution, not isolated pip-binding attribution.
+- Starting batch 2 now under block 8: pip-binding-index 9299e4be, three B1 pairs on cores 12-17 and three B2 pairs on cores 18-23, concurrency 12, caps 1920/8460 s, FASM/QoR gates per pair. The B1 original-input hash guard is being added to the prepared launcher before launch.
+
+## 2026-11-03T19:54Z — updated optimization summary
+| Change | B1 wall (s) | B2 wall (s) | QoR delta | FASM identical | Status |
+| --- | ---: | ---: | --- | :---: | --- |
+| Reference baseline | 623.63 | 2814.37 | baseline | n/a | original-input measured reference |
+| Router scoring fast path | 602.19 -> 553.27 | 2666.79 -> 2563.22 | none | yes | accepted on topic branch |
+| Router queue capacity | 603.82 -> 628.03 | not run | none | yes | abandoned: runtime regression |
+| Flat WireId index | 578.45 -> 492.63 | 2662.71 -> 2399.76 | none | yes | accepted on topic branch |
+| Router stack 9a83eaa0 | 613.96 -> 480.17 | 3481.06 -> 2855.96 | none | yes | accepted on topic branch |
+| Pip-binding stack 9299e4be | running | running | pending | pending | batch 2 running |
