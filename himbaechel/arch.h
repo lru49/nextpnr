@@ -473,6 +473,7 @@ struct Arch : BaseArch<ArchRanges>
     ~Arch() {};
 
     void load_chipdb(const std::string &path);
+    void init_pip_bindings();
     void set_speed_grade(const std::string &speed);
     void set_package(const std::string &package);
 
@@ -562,6 +563,18 @@ struct Arch : BaseArch<ArchRanges>
     void unbindWire(WireId wire) override
     {
         uarch->notifyWireChange(wire, nullptr);
+        NetInfo *net = getBoundWireNet(wire);
+        PipId pip;
+        if (net != nullptr) {
+            auto it = net->wires.find(wire);
+            if (it != net->wires.end())
+                pip = it->second.pip;
+        }
+        if (pip != PipId()) {
+            auto &binding = pip_binding(pip);
+            NPNR_ASSERT(binding == net);
+            binding = nullptr;
+        }
         BaseArch::unbindWire(wire);
     }
 
@@ -625,6 +638,12 @@ struct Arch : BaseArch<ArchRanges>
         return UphillPipRange(chip_info, get_tile_wire_range(wire));
     }
 
+    // Flat mirror of base_pip2net for hot binding queries. The extra offset
+    // entry stores both the end of each tile and the total pip count.
+    std::vector<size_t> pip_tile_offsets;
+    std::vector<NetInfo *> pip_bindings;
+    NetInfo *&pip_binding(PipId pip) { return pip_bindings[pip_tile_offsets[pip.tile] + pip.index]; }
+
     bool checkPipAvail(PipId pip) const override
     {
         if (!uarch->checkPipAvail(pip))
@@ -653,6 +672,9 @@ struct Arch : BaseArch<ArchRanges>
         }
         uarch->notifyPipChange(pip, net);
         BaseArch::bindPip(pip, net, strength);
+        auto &binding = pip_binding(pip);
+        NPNR_ASSERT(binding == nullptr);
+        binding = net;
     }
     void unbindPip(PipId pip) override
     {
@@ -665,6 +687,19 @@ struct Arch : BaseArch<ArchRanges>
         }
         uarch->notifyPipChange(pip, nullptr);
         BaseArch::unbindPip(pip);
+        auto &binding = pip_binding(pip);
+        NPNR_ASSERT(binding != nullptr);
+        binding = nullptr;
+    }
+    NetInfo *getBoundPipNet(PipId pip) const override
+    {
+        if (pip.tile < 0 || pip.index < 0 || static_cast<size_t>(pip.tile) + 1 >= pip_tile_offsets.size())
+            return nullptr;
+        const size_t tile_offset = pip_tile_offsets[pip.tile];
+        const size_t tile_end = pip_tile_offsets[pip.tile + 1];
+        if (static_cast<size_t>(pip.index) >= tile_end - tile_offset)
+            return nullptr;
+        return pip_bindings[tile_offset + pip.index];
     }
     bool isPipInverting(PipId pip) const override { return uarch->isPipInverting(pip); }
 
