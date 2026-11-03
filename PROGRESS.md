@@ -65,3 +65,7 @@ Append-only record. Times are UTC.
 | Router scoring fast path | 602.19 -> 553.27 | 2666.79 -> 2563.22 | none | yes | accepted on topic branch |
 | Router queue capacity | 603.82 -> 628.03 | not run | none | yes | abandoned: runtime regression |
 | Flat WireId index | 578.45 -> 492.63 | 2662.71 -> 2399.76 | none | yes | accepted on topic branch |
+
+## 2026-11-03T12:46Z — directive acknowledgement and recovery
+- ACK 2026-11-03T11:56Z lane: recovered the canonical progress and am preparing the stacked accepted candidates and four profile-driven B1 candidates for six core-pinned pairs with 3x timeouts and per-pair FASM gates.
+- Pip-delay-cache B1: abandoned: runtime > 3x reference. Stored pair `20261103T091100Z-b1-pip-pair` records candidate exit 143 after the 32-minute timeout; no nextpnr process remains in this lane namespace. Do not rerun this candidate.
