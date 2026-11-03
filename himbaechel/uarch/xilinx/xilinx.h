@@ -162,6 +162,10 @@ struct XilinxImpl : HimbaechelAPI
     // but fasm.cc emits it anyway" (fine).  Built once on first use.
     mutable dict<PseudoPipKey, std::vector<std::string>> pseudo_pip_config;
     mutable bool pseudo_pip_keys_valid = false;
+    // Static routing-pip classifications, indexed by tile type then pip index.
+    // Inner vectors are allocated lazily; no placement/routing state is cached.
+    mutable std::vector<std::vector<uint8_t>> pip_static_cache;
+    uint8_t get_pip_static_flags(PipId pip) const;
     bool is_pip_unavail(PipId pip) const;
     // Does this design instantiate a BUFR?  The regional-clock datapath
     // (RCLK_BEFORE_DIV -> RCLK_OUT -> RCLK2RCLK -> CK_BUFRCLK) runs through a

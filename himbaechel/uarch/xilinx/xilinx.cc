@@ -192,6 +192,9 @@ void XilinxImpl::init(Context *ctx)
         auto extra_data = tile_extra_data(i);
         tile_status.at(i).site_variant.resize(extra_data->sites.ssize());
     }
+
+    pip_static_cache.clear();
+    pip_static_cache.resize(ctx->chip_info->tile_types.size());
 }
 
 IdString XilinxImpl::getBelBucketForCellType(IdString cell_type) const
@@ -371,11 +374,87 @@ void XilinxImpl::update_bram_bel(BelId bel, CellInfo *cell)
     tts.bts->cells[z] = cell;
 }
 
+enum PipStaticFlags : uint8_t
+{
+    PSF_VALID = 1 << 0,
+    PSF_BUFR_CLOCK_PATH = 1 << 1,
+    PSF_CLK_BUFG_R = 1 << 2,
+    PSF_THROUGH_BUFGCTRL = 1 << 3,
+    PSF_UNPROGRAMMABLE = 1 << 4,
+};
+
+// Classify only immutable chipdb/FASM properties of a routing pip. Tile types
+// share their pip arrays and wire names, so one lazy inner cache covers every
+// instance of that type. Placement state and design_has_bufr stay out of here.
+uint8_t XilinxImpl::get_pip_static_flags(PipId pip) const
+{
+    const auto tile_type = ctx->chip_info->tile_insts[pip.tile].type;
+    auto &type_cache = pip_static_cache[tile_type];
+    const auto &tile_data = chip_tile_info(ctx->chip_info, pip.tile);
+    if (type_cache.empty())
+        type_cache.resize(tile_data.pips.ssize());
+    uint8_t &cached = type_cache[pip.index];
+    if (cached & PSF_VALID)
+        return cached;
+
+    const auto &pip_data = chip_pip_info(ctx->chip_info, pip);
+    const auto &extra_data = *reinterpret_cast<const XlnxPipExtraDataPOD *>(pip_data.extra_data.get());
+    uint8_t flags = PSF_VALID;
+
+    IdString tt = IdString(tile_data.type_name);
+    IdString src = IdString(tile_data.wires[pip_data.src_wire].name);
+    IdString dst = IdString(tile_data.wires[pip_data.dst_wire].name);
+    const std::string &d = dst.str(ctx);
+    if (d.find("CK_BUFRCLK") != std::string::npos || d.find("RCLK_BEFORE_DIV") != std::string::npos ||
+        d.find("RCLK_OUT") != std::string::npos || d.find("RCLK2RCLK") != std::string::npos)
+        flags |= PSF_BUFR_CLOCK_PATH;
+
+    std::string tts = tt.str(ctx);
+    bool tile_is_clk_bufg_r =
+            (boost::starts_with(tts, "CLK_BUFG_TOP_R") || boost::starts_with(tts, "CLK_BUFG_BOT_R"));
+    if (tile_is_clk_bufg_r) {
+        flags |= PSF_CLK_BUFG_R;
+        const std::string &ds = dst.str(ctx), &ss = src.str(ctx);
+        bool through_bufgctrl = boost::starts_with(ds, "CLK_BUFG_BUFGCTRL") && boost::ends_with(ds, "_O") &&
+                                boost::starts_with(ss, "CLK_BUFG_BUFGCTRL") &&
+                                (boost::ends_with(ss, "_I0") || boost::ends_with(ss, "_I1"));
+        if (through_bufgctrl)
+            flags |= PSF_THROUGH_BUFGCTRL;
+    }
+
+    if (uint32_t(extra_data.pip_config) & PIP_CFG_NO_BITS) {
+        if (!pseudo_pip_keys_valid) {
+            xlnx_build_pseudo_pip_config(ctx, pseudo_pip_config);
+            pseudo_pip_keys_valid = true;
+        }
+        // Mirror FasmBackend::write_pip: deliberately empty writers and the
+        // hand-written pseudo-pip table make a no-bits pip emittable.
+        bool writer_emits_nothing = false;
+        bool is_dsp_tile = tts == "DSP_L" || tts == "DSP_R";
+        bool is_sing_ioi3_tile = tts == "RIOI3_SING" || tts == "LIOI3_SING" || tts == "RIOI_SING";
+        if (is_dsp_tile) {
+            writer_emits_nothing = true;
+        } else if (is_sing_ioi3_tile) {
+            std::string sn = src.str(ctx), dn = dst.str(ctx);
+            bool from_imux_or_ctrl = sn.find("IMUX") != std::string::npos || sn.find("CTRL0") != std::string::npos;
+            bool to_clock_wire = dn.find("CLK") != std::string::npos;
+            writer_emits_nothing = from_imux_or_ctrl && !to_clock_wire;
+        }
+        bool has_pseudo_pip_fasm = pseudo_pip_config.count(PseudoPipKey{tt, dst, src});
+        if (!writer_emits_nothing && !has_pseudo_pip_fasm)
+            flags |= PSF_UNPROGRAMMABLE;
+    }
+
+    cached = flags;
+    return cached;
+}
+
 bool XilinxImpl::is_pip_unavail(PipId pip) const
 {
     const auto &pip_data = chip_pip_info(ctx->chip_info, pip);
     const auto &extra_data = *reinterpret_cast<const XlnxPipExtraDataPOD *>(pip_data.extra_data.get());
     unsigned pip_type = pip_data.flags;
+    uint8_t static_flags = 0;
 
     // The regional-clock (BUFR) datapath is a BUFFER, not routing.
     //
@@ -413,20 +492,10 @@ if (cell.second->type.in(id_BUFR, id_BUFR_BUFR)) {
                 }
             design_has_bufr_valid = true;
         }
-        if (!design_has_bufr) {
-            IdString dst = IdString(chip_tile_info(ctx->chip_info, pip.tile).wires[pip_data.dst_wire].name);
-            const std::string &d = dst.str(ctx);
-            bool drives_bufr_clock_path =
-                    d.find("CK_BUFRCLK") != std::string::npos || d.find("RCLK_BEFORE_DIV") != std::string::npos ||
-                    d.find("RCLK_OUT") != std::string::npos || d.find("RCLK2RCLK") != std::string::npos;
-            if (drives_bufr_clock_path)
-                return true;
-        }
-        IdString tt = IdString(chip_tile_info(ctx->chip_info, pip.tile).type_name);
-        std::string tts = tt.str(ctx);
-        bool tile_is_clk_bufg_r =
-                (boost::starts_with(tts, "CLK_BUFG_TOP_R") || boost::starts_with(tts, "CLK_BUFG_BOT_R"));
-        if (tile_is_clk_bufg_r) {
+        static_flags = get_pip_static_flags(pip);
+        if (!design_has_bufr && (static_flags & PSF_BUFR_CLOCK_PATH))
+            return true;
+        if (static_flags & PSF_CLK_BUFG_R) {
             bool has_bound_bufgctrl = false;
             const auto &tile_data = chip_tile_info(ctx->chip_info, pip.tile);
             for (int32_t i = 0; i < tile_data.bels.ssize(); ++i) {
@@ -445,13 +514,7 @@ if (cell.second->type.in(id_BUFR, id_BUFR_BUFR)) {
             // drops that slot's IN_USE/ZINV_CE0/ZINV_S0, so the route-through comes out as a buffer that
             // passes nothing: the net is a constant on hardware (seen as stuck register bits behind a
             // data net that took the global clock spine).
-            IdString dst = IdString(tile_data.wires[pip_data.dst_wire].name);
-            IdString src = IdString(tile_data.wires[pip_data.src_wire].name);
-            const std::string &ds = dst.str(ctx), &ss = src.str(ctx);
-            bool through_bufgctrl = boost::starts_with(ds, "CLK_BUFG_BUFGCTRL") && boost::ends_with(ds, "_O") &&
-                                    boost::starts_with(ss, "CLK_BUFG_BUFGCTRL") &&
-                                    (boost::ends_with(ss, "_I0") || boost::ends_with(ss, "_I1"));
-            if (through_bufgctrl)
+            if (static_flags & PSF_THROUGH_BUFGCTRL)
                 return true;
         }
     }
@@ -472,41 +535,10 @@ if (cell.second->type.in(id_BUFR, id_BUFR_BUFR)) {
     // The pseudo-pip table is the exception: those pips carry hand-written fasm
     // in fasm.cc and are emittable despite having no database entry, so the
     // router must still be allowed to use them.
-    bool routing_pip_without_bits =
-            pip_type == PIP_TILE_ROUTING && (uint32_t(extra_data.pip_config) & PIP_CFG_NO_BITS);
-    if (routing_pip_without_bits) {
-        if (!pseudo_pip_keys_valid) {
-            xlnx_build_pseudo_pip_config(ctx, pseudo_pip_config);
-            pseudo_pip_keys_valid = true;
-        }
-        IdString tt = IdString(chip_tile_info(ctx->chip_info, pip.tile).type_name);
-        IdString src = IdString(chip_tile_info(ctx->chip_info, pip.tile).wires[pip_data.src_wire].name);
-        IdString dst = IdString(chip_tile_info(ctx->chip_info, pip.tile).wires[pip_data.dst_wire].name);
-        // The rule is: reject a pip iff FasmBackend::write_pip would emit a
-        // feature that prjxray cannot resolve.  Anywhere write_pip
-        // deliberately emits NOTHING, the pip costs no bits and is fine to
-        // use, so the two exemption paths there must be mirrored here or we
-        // reject pips that were never a problem.  (Banning the DSP class broke
-        // VCC -> DSP48.OPMODE*INV_OUT routing outright.)
-        std::string tts = tt.str(ctx);
-        bool writer_emits_nothing = false;
-        bool is_dsp_tile = tts == "DSP_L" || tts == "DSP_R";
-        bool is_sing_ioi3_tile = tts == "RIOI3_SING" || tts == "LIOI3_SING" || tts == "RIOI_SING";
-        if (is_dsp_tile) {
-            // fasm.cc: "FIXME: PPIPs missing for DSPs" -- whole tile skipped
-            writer_emits_nothing = true;
-        } else if (is_sing_ioi3_tile) {
-            // fasm.cc: "FIXME: PPIPs missing for SING IOI3s"
-            std::string sn = src.str(ctx), dn = dst.str(ctx);
-            bool from_imux_or_ctrl = sn.find("IMUX") != std::string::npos || sn.find("CTRL0") != std::string::npos;
-            bool to_clock_wire = dn.find("CLK") != std::string::npos;
-            writer_emits_nothing = from_imux_or_ctrl && !to_clock_wire;
-        }
-        bool has_pseudo_pip_fasm = pseudo_pip_config.count(PseudoPipKey{tt, dst, src});
-        bool pip_is_unprogrammable = !writer_emits_nothing && !has_pseudo_pip_fasm;
-        if (pip_is_unprogrammable)
-            return true;
-    }
+    // The cached static result mirrors write_pip's DSP and SING-IOI3 empty-writer
+    // exemptions as well as the pseudo-pip table.
+    if (static_flags & PSF_UNPROGRAMMABLE)
+        return true;
     if (pip_type == PIP_SITE_ENTRY) {
         WireId dst = ctx->getPipDstWire(pip);
         if (ctx->getWireType(dst) == id_INTENT_SITE_GND) {
