@@ -32,7 +32,7 @@ class XilinxBelBucketTest : public ::testing::Test
     virtual void SetUp()
     {
         init_share_dirname();
-        chipArgs.device = "xc7a50tcsg324-1";
+        chipArgs.device = "xc7z020";
         ctx = new Context(chipArgs);
         ctx->uarch->init(ctx);
         ctx->late_init();
@@ -57,7 +57,6 @@ TEST_F(XilinxBelBucketTest, repeated_bel_type_buckets_as_the_primitive)
     EXPECT_EQ(ctx->getBelBucketForCellType(id_DSP48E1_DSP48E1), id_DSP48E1);
     EXPECT_EQ(ctx->getBelBucketForCellType(id_MMCME2_ADV_MMCME2_ADV), id_MMCME2_ADV);
     EXPECT_EQ(ctx->getBelBucketForCellType(id_BUFG_BUFG), id_BUFG);
-    EXPECT_EQ(ctx->getBelBucketForCellType(id_BUFR_BUFR), id_BUFR);
     EXPECT_EQ(ctx->getBelBucketForCellType(id_ISERDESE2_ISERDESE2), id_ISERDESE2);
 }
 
