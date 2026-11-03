@@ -24,3 +24,26 @@ Append-only record. Times are UTC.
 - Instrumented B2: 2933.84 s wall, 1683.82 s router2, 2,291,836 KiB maximum RSS, and about 2 million samples.
 - Both runs converged at router iteration 20 with post-place/final Fmax 36.24/31.76 MHz. Report JSON is identical and FASM payload after the version header is byte-identical.
 - Recorded whole-run and per-phase top-30 symbols in `docs/perf/baseline-b2-profile-top30.txt`; router hash/delay lookups remain the leaders.
+
+## 2026-11-03 00:10 — Router2 scoring fast path validated
+- Branch `perf/router-score-fastpath`, implementation `326efc3f`; B1/B2 results are in `docs/perf/router-score-fastpath.md` on that branch.
+- B1 companion-build wall 602.19 -> 553.27 s (-8.12%); Router2 494.45 -> 451.00 s (-8.79%); RSS +0.02%; 91 iterations and QoR unchanged.
+- B2 companion-build wall 2666.79 -> 2563.22 s (-3.88%); Router2 1519.09 -> 1400.03 s (-7.84%); RSS +0.01%; 20 iterations and QoR unchanged.
+- Both report JSON files and complete FASM files are byte-identical. Accepted on the topic branch, not yet merged to fork main. These are single-pair measurements; the patched B2 placement overlapped another validation, making its wall delta conservative.
+
+## 2026-11-03 00:10 — Router2 queue-capacity candidate rejected
+- Branch `perf/router-queue-capacity`, implementation `e68901e8`; results are in `docs/perf/router-queue-capacity.md` on that branch.
+- B1 wall 603.82 -> 628.03 s (+3.98%); Router2 501.42 -> 519.38 s (+3.58%); RSS +0.02%; 91 iterations and QoR unchanged.
+- Report JSON and complete FASM are identical, but the candidate regressed runtime and was abandoned without a B2 run.
+
+## 2026-11-03 00:02 — Flat WireId index validation started
+- Built and pushed `d538000d` on `perf/router-wire-index`; it replaces the hot `dict<WireId, int>` with tile offsets and a flat integer vector while preserving `flat_wires` order.
+- Sequential B1 companion-build comparison is running on core 24; results are pending.
+
+## 2026-11-03 00:10 — Optimization summary
+| Change | B1 wall (s) | B2 wall (s) | QoR delta | FASM identical | Status |
+| --- | ---: | ---: | --- | :---: | --- |
+| Reference baseline | 623.63 | 2814.37 | baseline | n/a | measured concurrently |
+| Router scoring fast path | 602.19 -> 553.27 | 2666.79 -> 2563.22 | none | yes | accepted on topic branch |
+| Router queue capacity | 603.82 -> 628.03 | not run | none | yes | abandoned: runtime regression |
+| Flat WireId index | running | pending | pending | pending | validation running |
