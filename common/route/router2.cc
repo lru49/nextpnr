@@ -520,7 +520,7 @@ struct Router2
     }
 
     float score_wire_for_arc(NetInfo *net, store_index<PortRef> user, size_t phys_pin, WireId wire, PipId pip,
-                             const PerWireData &wd, float base_cost, float crit_weight)
+                             Loc pip_loc, const PerWireData &wd, float base_cost, float crit_weight)
     {
         auto &nd = nets.at(net->udata);
         int overuse = wd.curr_cong;
@@ -536,9 +536,8 @@ struct Router2
         }
         float present_cost = 1.0f + overuse * curr_cong_weight * crit_weight;
         if (pip != PipId()) {
-            Loc pl = ctx->getPipLocation(pip);
             bias_cost = cfg.bias_cost_factor * (base_cost / int(net->users.entries())) *
-                        ((std::abs(pl.x - nd.cx) + std::abs(pl.y - nd.cy)) / float(nd.hpwl));
+                        ((std::abs(pip_loc.x - nd.cx) + std::abs(pip_loc.y - nd.cy)) / float(nd.hpwl));
         }
 
         auto resource_key = wire_to_resource.find(wire);
@@ -558,8 +557,7 @@ struct Router2
         float smooth_cost = 1.0f;
         bool smoothing_prices_this_pip = smoothing_active && smooth_target > 0 && pip != PipId();
         if (smoothing_prices_this_pip) {
-            Loc pl = ctx->getPipLocation(pip);
-            auto it = tile_occ.find(tile_key(pl.x, pl.y));
+            auto it = tile_occ.find(tile_key(pip_loc.x, pip_loc.y));
             bool pip_tile_is_hot = it != tile_occ.end() && it->second > smooth_target;
             if (pip_tile_is_hot)
                 smooth_cost = 1.0f + cfg.smooth_weight *
@@ -1012,8 +1010,12 @@ struct Router2
                     auto &curr_data = flat_wires.at(curr.wire);
                     for (PipId dh : ctx->getPipsDownhill(curr_data.w)) {
                         // Skip pips outside of box in bounding-box mode
-                        if (is_bb && !hit_test_pip(nd.bb, ctx->getPipLocation(dh)))
-                            continue;
+                        Loc pip_loc;
+                        if (is_bb) {
+                            pip_loc = ctx->getPipLocation(dh);
+                            if (!hit_test_pip(nd.bb, pip_loc))
+                                continue;
+                        }
                         if (!ctx->checkPipAvailForNet(dh, net))
                             continue;
                         WireId next = ctx->getPipDstWire(dh);
@@ -1021,7 +1023,9 @@ struct Router2
                         WireScore next_score;
                         float base_cost = cfg.get_base_cost(ctx, next, dh, crit_weight);
                         next_score.delay = curr.score.delay + base_cost;
-                        next_score.cost = curr.score.cost + score_wire_for_arc(net, i, phys_pin, next, dh,
+                        if (!is_bb)
+                            pip_loc = ctx->getPipLocation(dh);
+                        next_score.cost = curr.score.cost + score_wire_for_arc(net, i, phys_pin, next, dh, pip_loc,
                                                                                flat_wires.at(next_idx), base_cost, crit_weight);
                         next_score.togo_cost =
                                 cfg.estimate_weight * get_togo_cost(net, i, next_idx, dst_wire, false, crit_weight);
@@ -1089,8 +1093,12 @@ struct Router2
                     for (PipId uh : ctx->getPipsUphill(curr_data.w)) {
                         if (bound_pip != PipId() && bound_pip != uh)
                             continue;
-                        if (is_bb && !hit_test_pip(nd.bb, ctx->getPipLocation(uh)))
-                            continue;
+                        Loc pip_loc;
+                        if (is_bb) {
+                            pip_loc = ctx->getPipLocation(uh);
+                            if (!hit_test_pip(nd.bb, pip_loc))
+                                continue;
+                        }
                         if (!ctx->checkPipAvailForNet(uh, net))
                             continue;
                         WireId next = ctx->getPipSrcWire(uh);
@@ -1098,7 +1106,9 @@ struct Router2
                         WireScore next_score;
                         float base_cost = cfg.get_base_cost(ctx, next, uh, crit_weight);
                         next_score.delay = curr.score.delay + base_cost;
-                        next_score.cost = curr.score.cost + score_wire_for_arc(net, i, phys_pin, next, uh,
+                        if (!is_bb)
+                            pip_loc = ctx->getPipLocation(uh);
+                        next_score.cost = curr.score.cost + score_wire_for_arc(net, i, phys_pin, next, uh, pip_loc,
                                                                                flat_wires.at(next_idx), base_cost, crit_weight);
                         next_score.togo_cost = const_mode
                                                        ? 0
