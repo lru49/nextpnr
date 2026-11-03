@@ -231,7 +231,22 @@ struct XilinxImpl : HimbaechelAPI
     bool cell_tags_set = false;
 
     // Improved delay predictions where sites are located far from their associated interconnect
-    dict<WireId, Loc> source_locs, sink_locs;
+    std::vector<int> wire_loc_offsets;
+    std::vector<Loc> source_locs, sink_locs;
+    const Loc *find_wire_loc(const std::vector<Loc> &locs, WireId wire) const
+    {
+        if (wire.tile < 0 || wire.index < 0 || size_t(wire.tile) + 1 >= wire_loc_offsets.size())
+            return nullptr;
+        size_t index = size_t(wire_loc_offsets[wire.tile]) + size_t(wire.index);
+        if (index >= size_t(wire_loc_offsets[wire.tile + 1]))
+            return nullptr;
+        const Loc &loc = locs[index];
+        return loc.x < 0 ? nullptr : &loc;
+    }
+    Loc &wire_loc(std::vector<Loc> &locs, WireId wire)
+    {
+        return locs.at(size_t(wire_loc_offsets.at(wire.tile) + wire.index));
+    }
     bool is_general_routing(WireId wire) const;
     void find_source_sink_locs();
 
