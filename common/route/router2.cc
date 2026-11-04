@@ -863,6 +863,14 @@ struct Router2
         wd.cost_bwd = cost;
     }
 
+    bool was_visited_fwd(const PerWireData &wd, float cost)
+    {
+        return wd.visited_fwd && wd.cost_fwd <= cost;
+    }
+    bool was_visited_bwd(const PerWireData &wd, float cost)
+    {
+        return wd.visited_bwd && wd.cost_bwd <= cost;
+    }
     bool was_visited_fwd(int wire, float cost)
     {
         return flat_wires.at(wire).visited_fwd && flat_wires.at(wire).cost_fwd <= cost;
@@ -1004,12 +1012,12 @@ struct Router2
                     auto curr = t.fwd_queue.top();
                     t.fwd_queue.pop();
                     ++explored;
-                    if (was_visited_bwd(curr.wire, std::numeric_limits<float>::max())) {
+                    auto &curr_data = flat_wires.at(curr.wire);
+                    if (was_visited_bwd(curr_data, std::numeric_limits<float>::max())) {
                         // Meet in the middle; done
                         midpoint_wire = curr.wire;
                         break;
                     }
-                    auto &curr_data = flat_wires.at(curr.wire);
                     for (PipId dh : ctx->getPipsDownhill(curr_data.w)) {
                         // Skip pips outside of box in bounding-box mode
                         if (is_bb && !hit_test_pip(nd.bb, ctx->getPipLocation(dh)))
@@ -1041,7 +1049,7 @@ struct Router2
                         WireScore next_score;
                         float base_cost = cfg.get_base_cost(ctx, next, dh, crit_weight);
                         next_score.delay = curr.score.delay + base_cost;
-                        if (was_visited_fwd(next_idx, next_score.delay)) {
+                        if (was_visited_fwd(nwd, next_score.delay)) {
                             // Don't expand the same node twice.
                             continue;
                         }
@@ -1074,7 +1082,7 @@ struct Router2
                             best_midpoint_cost = curr.score.cost;
                         }
                     } else {
-                        if (was_visited_fwd(curr.wire, std::numeric_limits<float>::max())) {
+                        if (was_visited_fwd(curr_data, std::numeric_limits<float>::max())) {
                             // Meet in the middle; done
                             midpoint_wire = curr.wire;
                             break;
@@ -1114,7 +1122,7 @@ struct Router2
                         WireScore next_score;
                         float base_cost = cfg.get_base_cost(ctx, next, uh, crit_weight);
                         next_score.delay = curr.score.delay + base_cost;
-                        if (was_visited_bwd(next_idx, next_score.delay)) {
+                        if (was_visited_bwd(nwd, next_score.delay)) {
                             // Don't expand the same node twice.
                             continue;
                         }
