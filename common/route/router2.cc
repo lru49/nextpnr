@@ -436,7 +436,7 @@ struct Router2
             ++wire_found->second.second;
         }
 
-        if (pip == PipId())
+        if (pip == PipId() || wire_to_resource.empty())
             return;
 
         auto resource_key = ctx->getResourceKeyForPip(pip);
@@ -478,7 +478,7 @@ struct Router2
             net.wires.erase(wd.w);
         }
 
-        if (pip == PipId())
+        if (pip == PipId() || wire_to_resource.empty())
             return;
 
         auto resource_key = ctx->getResourceKeyForPip(pip);
