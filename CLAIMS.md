@@ -7,3 +7,4 @@ ABANDONED 2026-11-04T11:12:14Z lane2 perf/l2-heap-cell-location-index B1 identit
 ABANDONED 2026-11-04T11:18:00Z lane1 perf/no-resource-fastpath-r1 B1 identity PASS; wall +0.2999%, Router2 +0.0951%, both timing gates FAIL
 CLAIM 2026-11-04T11:27:09Z lane2 perf/l2-fast-pip-delay-source-bypass Himbaechel/Arch::getPipDelay fast-mode source-RC bypass
 CLAIM 2026-11-04T11:26:00Z lane1 perf/visit-data-access-r1 Router2/was_visited-access-reuse
+CLAIM 2026-11-04T11:40:00Z lane1 perf/route-cost-source-uses-r1 Router2/score_wire_for_arc+get_togo_cost
