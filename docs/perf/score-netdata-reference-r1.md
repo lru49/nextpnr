@@ -14,6 +14,10 @@ The source branch is pushed at `0485077c40b331eb03481d28028bfcf7f5bfeafd`; `git 
 
 The Release/IPO xc7z020-only Ninja build used cores 40-63 and both C/C++ compiler launchers set to `ccache`. Generated `common/version.h` and `--version` report `perf-accepted-qor-revert-40d3b873`. CMakeCache confirms Release, `USE_IPO=ON`, Himbaechel Xilinx-only, both `ccache` launchers and the required version string. The final source worktree and `git diff --check` are clean. Final binary: `nextpnr-score-netdata-r1/build/perf-score-netdata-reference-r1/nextpnr-himbaechel`, SHA-256 `85ae79ee1b3b26ce6ee9f18e35803f0c692324287ea55e9653413168df7f79e5`.
 
+## B1 launch
+
+B1 started at `2026-11-04T12:44:52Z` in `bench/results/20261104T124100Z-score-netdata-reference-r1-b1` under detached driver 23461 (PPID 1). Candidate nextpnr 23536 is pinned to core 2 and reference nextpnr 23533 to core 3, with affinity verified by `taskset`. Both use seed 1, one thread, 100 MHz and a 1920 s cap. Actual launch concurrency is one candidate/reference pair plus two reference-only B2 diagnostic runs (four nextpnr processes). Reference reproduction is scripted to complete before candidate comparison or metrics.
+
 ## Kill criterion and acceptance gates
 
 Run one detached B1 pair against the verified reference, candidate on core 2 and reference on core 3, seed 1, one thread, 100 MHz and a 1920 s cap. Record actual concurrency and guard input, candidate binary, reference binary and chipdb hashes before launch.
