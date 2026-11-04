@@ -520,7 +520,8 @@ struct Router2
     }
 
     float score_wire_for_arc(NetInfo *net, store_index<PortRef> user, size_t phys_pin, WireId wire, PipId pip,
-                             const PerWireData &wd, float base_cost, float crit_weight)
+                             const PerWireData &wd, int source_uses, bool wire_is_bound, float base_cost,
+                             float crit_weight)
     {
         auto &nd = nets.at(net->udata);
         int overuse = wd.curr_cong;
@@ -528,12 +529,8 @@ struct Router2
         float bias_cost = 0;
         float resource_hist_cost = 0.0f;
         float resource_present_cost = 0.0f;
-        int source_uses = 0;
-        auto fnd_wire = nd.wires.find(wire);
-        if (fnd_wire != nd.wires.end()) {
+        if (wire_is_bound)
             overuse -= 1;
-            source_uses = fnd_wire->second.second;
-        }
         float present_cost = 1.0f + overuse * curr_cong_weight * crit_weight;
         if (pip != PipId()) {
             Loc pl = ctx->getPipLocation(pip);
@@ -570,6 +567,14 @@ struct Router2
                               base_cost * resource_hist_cost * resource_present_cost / (1 + crit_weight));
     }
 
+    float get_togo_cost_with_source_uses(const PerWireData &wd, WireId src_sink, bool bwd, float crit_weight,
+                                         int source_uses)
+    {
+        // FIXME: timing/wirelength balance?
+        delay_t est_delay = ctx->estimateDelay(bwd ? src_sink : wd.w, bwd ? wd.w : src_sink);
+        return (ctx->getDelayNS(est_delay) / (1 + source_uses * crit_weight)) + cfg.ipin_cost_adder;
+    }
+
     float get_togo_cost(NetInfo *net, store_index<PortRef> user, int wire, WireId src_sink, bool bwd, float crit_weight)
     {
         auto &nd = nets.at(net->udata);
@@ -578,9 +583,7 @@ struct Router2
         auto fnd_wire = nd.wires.find(wd.w);
         if (fnd_wire != nd.wires.end())
             source_uses = fnd_wire->second.second;
-        // FIXME: timing/wirelength balance?
-        delay_t est_delay = ctx->estimateDelay(bwd ? src_sink : wd.w, bwd ? wd.w : src_sink);
-        return (ctx->getDelayNS(est_delay) / (1 + source_uses * crit_weight)) + cfg.ipin_cost_adder;
+        return get_togo_cost_with_source_uses(wd, src_sink, bwd, crit_weight, source_uses);
     }
 
     bool check_arc_routing(NetInfo *net, store_index<PortRef> usr, size_t phys_pin)
@@ -1045,10 +1048,13 @@ struct Router2
                             // Don't expand the same node twice.
                             continue;
                         }
+                        const bool wire_is_bound = fnd_wire != nd.wires.end();
+                        const int source_uses = wire_is_bound ? fnd_wire->second.second : 0;
                         next_score.cost = curr.score.cost + score_wire_for_arc(net, i, phys_pin, next, dh, nwd,
-                                                                               base_cost, crit_weight);
-                        next_score.togo_cost =
-                                cfg.estimate_weight * get_togo_cost(net, i, next_idx, dst_wire, false, crit_weight);
+                                                                               source_uses, wire_is_bound, base_cost,
+                                                                               crit_weight);
+                        next_score.togo_cost = cfg.estimate_weight * get_togo_cost_with_source_uses(
+                                                             nwd, dst_wire, false, crit_weight, source_uses);
                         set_visited_fwd(t, next_idx, dh, next_score.delay);
                         t.fwd_queue.push(QueuedWire(next_idx, next_score, t.rng.rng()));
                     }
@@ -1118,12 +1124,16 @@ struct Router2
                             // Don't expand the same node twice.
                             continue;
                         }
+                        auto fnd_next_wire = nd.wires.find(next);
+                        const bool wire_is_bound = fnd_next_wire != nd.wires.end();
+                        const int source_uses = wire_is_bound ? fnd_next_wire->second.second : 0;
                         next_score.cost = curr.score.cost + score_wire_for_arc(net, i, phys_pin, next, uh, nwd,
-                                                                               base_cost, crit_weight);
+                                                                               source_uses, wire_is_bound, base_cost,
+                                                                               crit_weight);
                         next_score.togo_cost = const_mode
                                                        ? 0
-                                                       : cfg.estimate_weight * get_togo_cost(net, i, next_idx, src_wire,
-                                                                                             true, crit_weight);
+                                                       : cfg.estimate_weight * get_togo_cost_with_source_uses(
+                                                                 nwd, src_wire, true, crit_weight, source_uses);
                         set_visited_bwd(t, next_idx, uh, next_score.delay);
                         t.bwd_queue.push(QueuedWire(next_idx, next_score, t.rng.rng()));
                     }
