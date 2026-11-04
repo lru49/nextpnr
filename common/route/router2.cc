@@ -393,11 +393,6 @@ struct Router2
         dict<std::pair<int, int>, pool<WireId>> wire_by_loc;
     };
 
-    bool thread_test_wire(ThreadContext &t, PerWireData &w)
-    {
-        return w.x >= t.bb.x0 && w.x <= t.bb.x1 && w.y >= t.bb.y0 && w.y <= t.bb.y1;
-    }
-
     enum ArcRouteResult
     {
         ARC_SUCCESS,
@@ -1036,7 +1031,8 @@ struct Router2
                                 fnd_resource->second.value != ctx->getResourceValueForPip(dh))
                                 continue;
                         }
-                        if (!thread_test_wire(t, nwd))
+                        if (!(nwd.x >= t.bb.x0 && nwd.x <= t.bb.x1 && nwd.y >= t.bb.y0 &&
+                              nwd.y <= t.bb.y1))
                             continue; // thread safety issue
                         WireScore next_score;
                         float base_cost = cfg.get_base_cost(ctx, next, dh, crit_weight);
@@ -1109,7 +1105,8 @@ struct Router2
                                 fnd_resource->second.value != ctx->getResourceValueForPip(uh))
                                 continue;
                         }
-                        if (!thread_test_wire(t, nwd))
+                        if (!(nwd.x >= t.bb.x0 && nwd.x <= t.bb.x1 && nwd.y >= t.bb.y0 &&
+                              nwd.y <= t.bb.y1))
                             continue; // thread safety issue
                         WireScore next_score;
                         float base_cost = cfg.get_base_cost(ctx, next, uh, crit_weight);
