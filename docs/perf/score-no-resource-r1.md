@@ -2,7 +2,11 @@
 
 ## Status
 
-Claimed under block 43; source and build not yet recorded.
+B1 running under block 43. Source `01dd83e17a95a7f0ee5de00a526a1d86f94fd291` is pushed directly over the stated base with only the planned `score_wire_for_arc` guard (7 insertions/5 deletions).
+
+Release/IPO xc7z020-only configure/build completed on cores 40-55 in 1.04/114.34 s with both C/C++ `ccache` launchers and maximum build RSS 2,677,980 KiB. Generated `--version` is `perf-accepted-qor-revert-40d3b873`; binary SHA-256 is `68f3e268c127c0351aedad1687c0f7fd85dfdd0e66db38ca39a8b8b9b00c2711`. Base ancestry, the tracked source diff and `git diff --check` passed.
+
+The guarded B1 pair started at 15:39:57Z in `bench/results/20261104T153500Z-score-no-resource-r1-b1`. Detached driver 9643 runs candidate nextpnr 9672 on core 10 and reference nextpnr 9669 on core 11, seed 1, one thread, 100 MHz and a 1920 s cap. Launch concurrency is one pair (two nextpnr processes), with no reference-only run. All input/binary/chipdb guards passed; reference reproduction precedes candidate comparison.
 
 ## Base and hypothesis
 
