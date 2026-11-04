@@ -42,3 +42,11 @@ ACK 2026-11-04T11:04Z lane2: block 2
 - Generated version remains `perf-accepted-qor-revert-40d3b873`; reference-chipdb `--test` passed on build core 28.
 
 ACK 2026-11-04T11:34Z lane2: block 2
+
+## 2026-11-04T11:55:52Z — fast pip-delay source bypass B1 PASS
+
+- Valid pair `20261104T114735Z-fast-pip-delay-source-bypass-b1` (candidate core 18, reference core 19). An earlier launcher attempt ran only the reference because of a shell backgrounding error; it executed no candidate and was discarded as a comparison. Its reference reproduced the stored reference exactly.
+- Reference reproduction PASS before candidate metrics: expected timing exit 1, normal completion/routing, stored FASM/report SHA-256, checksums and complete router history all matched.
+- Candidate/reference identity PASS: complete FASM and report byte identity, parsed report, router history, checksums, Fmax and final iteration 91 all equal. FASM SHA-256 `9885b5d11288445a488e53aa7e3059a1411fb886046d246a2d3289ad6cd30eb0`.
+- Reference → candidate: wall 399.17 → 373.61 s (-6.4033%), Router2 289.52 → 264.34 s (-8.6972%), HeAP 45.42 → 44.84 s. BOTH timing gates PASS.
+- No B2 pair started: directive block 3 first requires a reproduced B2 reference.
