@@ -2,7 +2,7 @@
 
 ## Status
 
-Both B1 pairs passed on 2026-11-04 with complete identity/QoR and both required timing gains. Two B2 pairs are running; the candidate is not accepted, merged or tagged.
+**ABANDONED on 2026-11-04.** Both B1 pairs passed, but B2 r1 failed complete-FASM/report/history/checksum identity. B2 r2's reference independently failed reproduction, so no r2 candidate verdict was drawn. The candidate is not accepted, merged or tagged; its measured timing does not override the identity failure.
 
 ## Base and branch
 
@@ -66,6 +66,12 @@ Result directory: `bench/results/20261104T081400Z-pip-delay-flat-r2-b1-r2`. Refe
 
 Both B1 pairs therefore pass the pre-published gates. This is not acceptance.
 
-## B2 repeats: running
+## B2 repeats: identity failure; abandon
 
-Two pairs started at 2026-11-04T08:30:35Z in `bench/results/20261104T082700Z-pip-delay-flat-r2-b2`: r1 uses candidate core 0/reference core 1 and r2 uses candidate core 2/reference core 3. Both use seed 1, one thread, 100 MHz, an 8460 s cap and the guarded B2 input. Each driver checks the stored reference FASM/report/checksum/history/Fmax result before candidate comparison. Both pairs must pass complete identity/QoR and at least 3.0% improvement in whole wall and Router2 before acceptance; no merge or tag is authorized meanwhile.
+Two pairs started at 2026-11-04T08:30:35Z in `bench/results/20261104T082700Z-pip-delay-flat-r2-b2`: r1 used candidate core 0/reference core 1 and r2 used candidate core 2/reference core 3. All four processes completed normally with exit 0.
+
+In r1, the reference reproduced every stored result before candidate metrics were inspected. The candidate then failed the mandatory identity gates: complete FASM, report bytes, parsed reports, full router history and checksums all differed. The reference reached iteration 17/Fmax 30.58 MHz/third checksum `0xeae85389`; the candidate reached iteration 16/Fmax 30.68 MHz/third checksum `0x6ff14c06`. Its measured wall change was -5.2819% and Router2 change -9.4364%, but these are **not a valid speedup** because the routed result is different.
+
+In r2, the reference itself did not reproduce the stored result: FASM SHA-256 was `18d00b1ccde28e327fd7fc41024487dc501e4d36a4f509a7dbb178f5e99e5b4a`, report SHA-256 `62fd9c1b31399315491fd7ee694c51f868d108f95001d29eb659204a78fe9058`, third checksum `0x0ab634fe`, final iteration 15 and Fmax 30.68 MHz. The driver therefore skipped candidate comparison (`compare=100`); no r2 candidate metrics or acceptance claim are used.
+
+One valid reference/candidate comparison is sufficient to reject this candidate on identity. `perf/pip-delay-flat-r2` is abandoned with no merge, tag or further acceptance run.

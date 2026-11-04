@@ -25,4 +25,10 @@ Before candidate metrics are read, the reference must reproduce FASM SHA-256 `98
 
 ## Build and status
 
-Build once with both C and C++ compiler launchers set to `ccache`, pinned to cores 40-63, using the reference version string so the complete FASM header can match. The candidate is named and published before implementation; no build or benchmark result exists yet.
+Build once with both C and C++ compiler launchers set to `ccache`, pinned to cores 40-63, using the reference version string so the complete FASM header can match. The candidate was named and published before implementation.
+
+Candidate source `eb703476c5d71f3aebe35125fb00d9b167763d9c` is pushed on `perf/pip-range-iterator`. The Release/IPO build completed successfully; binary SHA-256 is `8882e8e50b5dbe7441fced3b95f232d8cd77f92e2c3715ae68280a8aeb715db2`. The architecture database integrity test (`--test`) passed with the reference chipdb.
+
+## B1 screen: running
+
+The detached B1 pair started at 2026-11-04T09:19:10Z in `bench/results/20261104T091700Z-pip-range-iterator-b1`, with candidate core 6/reference core 7, seed 1, one thread, 100 MHz and a 1920 s cap. Both pip-delay B2 pairs had already finished, so actual total benchmark concurrency is 2 rather than the originally planned 6. Driver PID is 50723; candidate wrapper/actual PIDs are 50745/50747 and reference wrapper/actual PIDs are 50742/50744. Reference reproduction must pass before candidate comparison is considered.
