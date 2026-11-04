@@ -32,3 +32,4 @@ CLAIM 2026-11-04T14:23:00Z lane1 perf/thread-test-wire-inline-r1 Router2/thread_
 DONE 2026-11-04T14:44:16Z lane2 perf/l2-portref-iteration ABANDONED at B1 timing gate; wall +0.0025%, Router2 +0.0854%; report/history/FASM payload equal, raw version comment differs; no merge
 ABANDONED 2026-11-04T15:23:00Z lane1 perf/thread-test-wire-inline-r1 B1 identity PASS; wall -0.6830%, Router2 -0.3048%, both timing gates FAIL
 CLAIM 2026-11-04T15:29:25Z lane1 perf/score-no-resource-r1 Router2/score_wire_for_arc empty-wire_to_resource lookup guard
+ABANDONED 2026-11-04T15:51:00Z lane1 perf/score-no-resource-r1 B1 identity PASS; wall -0.7125%, Router2 -0.8569%, both timing gates FAIL
