@@ -170,6 +170,16 @@ template <typename T> class indexed_store
     // Total size of the container
     int32_t capacity() const { return int32_t(slots.size()); }
 
+    // Iterate over items in slot order without iterator or bounds-check overhead
+    template <typename Tf> void for_each(Tf &func)
+    {
+        for (int32_t index = 0; index < int32_t(slots.size()); ++index) {
+            auto &entry = slots[index];
+            if (entry.active)
+                func(entry.get(), store_index<T>(index));
+        }
+    }
+
     // Iterate over items
     template <typename It, typename S> class enumerated_iterator;
 

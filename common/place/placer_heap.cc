@@ -923,8 +923,7 @@ class HeAPPlacer
     {
         if (net->driver.cell != nullptr)
             func(net->driver, store_index<PortRef>());
-        for (auto usr : net->users.enumerate())
-            func(usr.value, usr.index);
+        net->users.for_each(func);
     }
 
     // Build the system of equations for either X or Y
