@@ -47,3 +47,8 @@ ACK 2026-11-04T11:04Z lane2: block 2
 - Identity PASS: complete FASM/report bytes, parsed report, router history, checksums, Fmax and final iteration 91 all equal; expected timing exits 1/1. FASM SHA-256 `9885b5d11288445a488e53aa7e3059a1411fb886046d246a2d3289ad6cd30eb0`.
 - Reference → candidate: wall 399.17 → 373.61 s (-6.4033%), Router2 289.52 → 264.34 s (-8.6972%), HeAP 45.42 → 44.84 s. BOTH timing gates PASS.
 - No B2 pair started while the B2 reference remains unreproduced (directive block 3). Next action is reference-only B2 reproduction, not a candidate pair.
+
+## 2026-11-04T11:59:47Z â two B2 reference-only reproductions launched
+
+- Root `20261104T115910Z-b2-reference-repro`; drivers 504643 (r1, reference core 19) and 504644 (r2, reference core 23), seed 1, one thread, 100 MHz, 8460 s cap. These are REFERENCE-ONLY runs; no candidate B2 pair or other lane-2 benchmark is active.
+- Verified reference binary SHA-256 `c33194144895cd1a95098fe9ddfdfbb2c43a1c552e7c07e9b0ead979082fcdc3` and original B2 input SHA-256 `9271cdc99c199854e89a21615481fd541171e9b742c257140e57a46e6323c7f1`. Both outputs must reproduce the stored reference and each other before any candidate B2 pair.
