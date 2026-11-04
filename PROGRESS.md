@@ -193,3 +193,10 @@ ACK 2026-11-04T15:26Z lane2: block 9
 - Next named queue: `perf/l2-heap-cluster-offset-reuse` (HeAP equation construction, tier 1), `perf/l2-detail-place-portref-iteration` (detailed-placement traversal, tier 1), and `perf/l2-router2-visit-generation` (Router2 visited-state reset elimination, tier 1). Claims are required before any build; lane1's active bind-no-resource and processed-sinks candidates are excluded.
 
 ACK 2026-11-04T15:55Z lane2: block 8 and block 9 and block 10
+
+## 2026-11-04T16:28:38Z — corrected full-model diagnostic and HeAP cluster-offset candidate running
+
+- Corrected B2 tier-2 diagnostic `20261104T161801Z-fast-pip-delay-source-bypass-full-model-b2-r1-loopfix-tier2` launched with `--ignore-loops` on the same full-model binaries and inputs as the failed pair: candidate PID 1014781 on core 18, reference PID 1014780 on core 19, timeout 8460 s. This is a diagnostic re-measurement of accepted tier-2 code, not a new candidate or a new acceptance claim.
+- CLAIM `perf/l2-heap-cluster-offset-reuse` pushed as `a752bbbe`. Candidate commit `0c9ae750f4bede309c7f0a4ec1a7338b0d35c478` caches each clustered child's offset during single-threaded `setup_solve_cells`, then reuses the existing `cell_locs` lookup in hot equation stamping; the cache is read-only during parallel X/Y solves. Expected tier 1 with identical equations and outputs.
+- Candidate build completed on cores 28–39; binary SHA-256 `49581f7fc3f091b9fa825d0f9d77e75e971b798e288bb422e6b3ab43d5a2f33c`. Reference binary SHA-256 `881d8b4f66bba9375067c814b3eb223b888ed2bcc4bee3c16786560e100d36b7` (accepted tier-2 base). B1 r1 root `20261104T162736Z-heap-cluster-offset-reuse-b1-r1`: candidate PID 1041993/core 26 and reference PID 1041992/core 27, timeout 1920 s. Reference reproduction against `20261104T143323Z-portref-iteration-b1/reference` is required before candidate metrics.
+- Remaining named queue: `perf/l2-detail-place-portref-iteration`, `perf/l2-router2-visit-generation`, and `perf/l2-detail-place-bel-location-reuse`. No candidate B2 run or bitstream build is authorised before B1 passes its gates.
