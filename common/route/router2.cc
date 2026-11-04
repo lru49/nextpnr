@@ -865,11 +865,13 @@ struct Router2
 
     bool was_visited_fwd(int wire, float cost)
     {
-        return flat_wires.at(wire).visited_fwd && flat_wires.at(wire).cost_fwd <= cost;
+        const auto &wd = flat_wires.at(wire);
+        return wd.visited_fwd && wd.cost_fwd <= cost;
     }
     bool was_visited_bwd(int wire, float cost)
     {
-        return flat_wires.at(wire).visited_bwd && flat_wires.at(wire).cost_bwd <= cost;
+        const auto &wd = flat_wires.at(wire);
+        return wd.visited_bwd && wd.cost_bwd <= cost;
     }
 
     float get_arc_crit(NetInfo *net, store_index<PortRef> i)
