@@ -184,6 +184,7 @@ class HeAPPlacer
         alloc_control_sets();
         seed_placement();
         update_all_chains();
+        index_cell_locations();
         wirelen_t hpwl = total_hpwl();
         log_info("Creating initial analytic placement for %d cells, random placement wirelen = %d.\n",
                  int(place_cells.size()), int(hpwl));
@@ -443,6 +444,9 @@ class HeAPPlacer
         bool locked, global;
     };
     dict<IdString, CellLocation> cell_locs;
+    // Populated only after seeding and chain setup have inserted every cell. Later updates modify existing entries,
+    // so these direct IdString-indexed pointers remain valid and avoid hashing in the analytic solver hot loops.
+    std::vector<CellLocation *> cell_locs_by_name;
     // The set of cells that we will actually place. This excludes locked cells and children cells of macros/chains
     // (only the root of each macro is placed.)
     std::vector<CellInfo *> place_cells;
@@ -918,6 +922,18 @@ class HeAPPlacer
         }
     }
 
+    void index_cell_locations()
+    {
+        size_t max_name_index = 0;
+        for (const auto &cell : cell_locs)
+            max_name_index = std::max(max_name_index, static_cast<size_t>(cell.first.index));
+        cell_locs_by_name.assign(max_name_index + 1, nullptr);
+        for (auto &cell : cell_locs)
+            cell_locs_by_name.at(cell.first.index) = &cell.second;
+    }
+
+    CellLocation &location_for_cell(const CellInfo *cell) { return *cell_locs_by_name.at(cell->name.index); }
+
     // Run a function on all ports of a net - including the driver and all users
     template <typename Tf> void foreach_port(NetInfo *net, Tf func)
     {
@@ -931,9 +947,9 @@ class HeAPPlacer
     void build_equations(EquationSystem<double> &es, bool yaxis, int iter = -1)
     {
         // Return the x or y position of a cell, depending on ydir
-        auto cell_pos = [&](CellInfo *cell) { return yaxis ? cell_locs.at(cell->name).y : cell_locs.at(cell->name).x; };
+        auto cell_pos = [&](CellInfo *cell) { return yaxis ? location_for_cell(cell).y : location_for_cell(cell).x; };
         auto legal_pos = [&](CellInfo *cell) {
-            return yaxis ? cell_locs.at(cell->name).legal_y : cell_locs.at(cell->name).legal_x;
+            return yaxis ? location_for_cell(cell).legal_y : location_for_cell(cell).legal_x;
         };
 
         es.reset();
@@ -944,7 +960,7 @@ class HeAPPlacer
                 continue;
             if (ni->users.empty())
                 continue;
-            if (cell_locs.at(ni->driver.cell->name).global)
+            if (location_for_cell(ni->driver.cell).global)
                 continue;
             // Find the bounds of the net in this axis, and the ports that correspond to these bounds
             PortRef *lbport = nullptr, *ubport = nullptr;
@@ -1026,23 +1042,23 @@ class HeAPPlacer
     void solve_equations(EquationSystem<double> &es, bool yaxis)
     {
         // Return the x or y position of a cell, depending on ydir
-        auto cell_pos = [&](CellInfo *cell) { return yaxis ? cell_locs.at(cell->name).y : cell_locs.at(cell->name).x; };
+        auto cell_pos = [&](CellInfo *cell) { return yaxis ? location_for_cell(cell).y : location_for_cell(cell).x; };
         std::vector<double> vals;
         std::transform(solve_cells.begin(), solve_cells.end(), std::back_inserter(vals), cell_pos);
         es.solve(vals, cfg.solverTolerance);
         for (size_t i = 0; i < vals.size(); i++)
             if (yaxis) {
-                cell_locs.at(solve_cells.at(i)->name).rawy = vals.at(i);
-                cell_locs.at(solve_cells.at(i)->name).y = std::min(max_y, std::max(0, int(vals.at(i))));
+                auto &cell_loc = location_for_cell(solve_cells.at(i));
+                cell_loc.rawy = vals.at(i);
+                cell_loc.y = std::min(max_y, std::max(0, int(vals.at(i))));
                 if (solve_cells.at(i)->region != nullptr)
-                    cell_locs.at(solve_cells.at(i)->name).y =
-                            limit_to_reg(solve_cells.at(i)->region, cell_locs.at(solve_cells.at(i)->name).y, true);
+                    cell_loc.y = limit_to_reg(solve_cells.at(i)->region, cell_loc.y, true);
             } else {
-                cell_locs.at(solve_cells.at(i)->name).rawx = vals.at(i);
-                cell_locs.at(solve_cells.at(i)->name).x = std::min(max_x, std::max(0, int(vals.at(i))));
+                auto &cell_loc = location_for_cell(solve_cells.at(i));
+                cell_loc.rawx = vals.at(i);
+                cell_loc.x = std::min(max_x, std::max(0, int(vals.at(i))));
                 if (solve_cells.at(i)->region != nullptr)
-                    cell_locs.at(solve_cells.at(i)->name).x =
-                            limit_to_reg(solve_cells.at(i)->region, cell_locs.at(solve_cells.at(i)->name).x, false);
+                    cell_loc.x = limit_to_reg(solve_cells.at(i)->region, cell_loc.x, false);
             }
     }
 
@@ -1054,12 +1070,12 @@ class HeAPPlacer
             NetInfo *ni = net.second.get();
             if (ni->driver.cell == nullptr)
                 continue;
-            CellLocation &drvloc = cell_locs.at(ni->driver.cell->name);
+            CellLocation &drvloc = location_for_cell(ni->driver.cell);
             if (drvloc.global)
                 continue;
             int xmin = drvloc.x, xmax = drvloc.x, ymin = drvloc.y, ymax = drvloc.y;
             for (auto &user : ni->users) {
-                CellLocation &usrloc = cell_locs.at(user.cell->name);
+                CellLocation &usrloc = location_for_cell(user.cell);
                 xmin = std::min(xmin, usrloc.x);
                 xmax = std::max(xmax, usrloc.x);
                 ymin = std::min(ymin, usrloc.y);
