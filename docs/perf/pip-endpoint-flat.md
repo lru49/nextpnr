@@ -21,6 +21,8 @@ Any identity/QoR failure, non-convergence or timing improvement below 3.0% in ei
 
 Before candidate metrics are read, the reference side must reproduce complete FASM SHA-256 `9885b5d11288445a488e53aa7e3059a1411fb886046d246a2d3289ad6cd30eb0` and checksums `0x86b726c6/0xeb2c108e/0xeea7ec3a` from the preceding isolated B1 pairs.
 
-## Status
+## Build and status
 
-Named before implementation and build on 2026-11-04. No benchmark result or acceptance claim exists yet.
+Source commit `642aa76cdcb00c7b05b9910aa5fc008ddf72d39c` is pushed. The clean Himbaechel-Xilinx Release/IPO build passed 63/63 with both C and C++ compiler launchers set to `ccache`. Build wall was 130.31 s and peak RSS was 2,677,960 KiB. The `--version` smoke passed as `perf-pip-endpoint-flat-40d3b873`; binary SHA-256 is `f5c1e6f886f1e32af55ec19189c9295875bd1e5f5ed775310c96b4f8c654b8cd`.
+
+The single B1 screening pair is ready to launch. No benchmark result or acceptance claim exists yet.
