@@ -254,3 +254,8 @@ Append-only record. Times are UTC.
 
 ## 2026-11-04T05:10Z — resume the single SA-cache screen
 - ACK 2026-11-04T02:53Z lane: block 21 items 1-4; corrected candidate `2598eb32` and reference `40d3b873` are already built with ccache, so I am reusing them for exactly one guarded B1 pair on cores 0/1 and starting nothing else.
+
+## 2026-11-04T05:15Z — corrected SA-cache B1 pair is live
+- The pre-resume driver `20261104T025417Z-sa-criticality-cache-b1` exited 125/125 in 0.00 s before place-and-route because it used the unsupported `--fasm` option. It produced no FASM, report or timing evidence and is recorded as a malformed harness invocation, not a candidate result. Its output directory is retained unchanged.
+- Started the first actual SA-cache B1 screen at 2026-11-04T05:12:43Z in `20261104T051152Z-sa-criticality-cache-b1`, using the known-good `-o fasm=...`, XDC, report and `--placer heap` command. Driver pid 3704; candidate command/nextpnr pids 3718/3721 on core 0 and reference command/nextpnr pids 3717/3722 on core 1. Both nextpnr processes were at 99.8% CPU with their declared affinities after two minutes. Concurrency 2, timeout 1920 s, planned cap 05:44:43Z; no other candidate or pair is running.
+- Input SHA-256 guard passed: `47b085cd1e4c5ce6e541d292014ba2adcf2ac70eabca665ea544ce76b4ee8a37`. Candidate `2598eb321bae64f4ba54e4fe7a7bc4f8e90f20f7` binary SHA-256 is `1d075a82000326c0465f72a8c8beefb7d2dff5825f7958f302c4541f5895e5b9`; reference `40d3b873a9bbea1e0fbc399df5ee3c4eae3cbd39` binary SHA-256 is `c33194144895cd1a95098fe9ddfdfbb2c43a1c552e7c07e9b0ead979082fcdc3`. The VM had 490 GiB free before launch.
