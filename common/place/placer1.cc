@@ -88,12 +88,14 @@ class SAPlacer
 
         net_bounds.resize(ctx->nets.size());
         net_arc_tcost.resize(ctx->nets.size());
+        net_arc_crit.resize(ctx->nets.size());
         old_udata.reserve(ctx->nets.size());
         net_by_udata.reserve(ctx->nets.size());
         decltype(NetInfo::udata) n = 0;
         for (auto &net : ctx->nets) {
             old_udata.emplace_back(net.second->udata);
             net_arc_tcost.at(n).resize(net.second->users.capacity());
+            net_arc_crit.at(n).resize(net.second->users.capacity());
             net.second->udata = n++;
             net_by_udata.push_back(net.second.get());
         }
@@ -835,7 +837,8 @@ class SAPlacer
     }
 
     // Get the timing cost for an arc of a net
-    inline double get_timing_cost(NetInfo *net, const PortRef &user)
+    inline double get_timing_cost(NetInfo *net, const PortRef &user, store_index<PortRef> user_idx,
+                                  bool refresh_crit = false)
     {
         int cc;
         if (net->driver.cell == nullptr)
@@ -843,9 +846,15 @@ class SAPlacer
         if (ctx->getPortTimingClass(net->driver.cell, net->driver.port, cc) == TMG_IGNORE)
             return 0;
 
-        float crit = tmg.get_criticality(CellPortKey(user));
+        float &cached_crit = net_arc_crit[net->udata][user_idx.idx()];
+        if (refresh_crit)
+            cached_crit = tmg.get_criticality(CellPortKey(user));
+#ifndef NDEBUG
+        else
+            NPNR_ASSERT(cached_crit == tmg.get_criticality(CellPortKey(user)));
+#endif
         double delay = ctx->getDelayNS(ctx->predictArcDelay(net, user));
-        return delay * std::pow(crit, crit_exp);
+        return delay * std::pow(cached_crit, crit_exp);
     }
 
     // Set up the cost maps
@@ -858,7 +867,8 @@ class SAPlacer
             net_bounds[ni->udata] = get_net_bounds(ni);
             if (cfg.timing_driven && int(ni->users.entries()) < cfg.timingFanoutThresh)
                 for (auto usr : ni->users.enumerate())
-                    net_arc_tcost[ni->udata][usr.index.idx()] = get_timing_cost(ni, usr.value);
+                    net_arc_tcost[ni->udata][usr.index.idx()] =
+                            get_timing_cost(ni, usr.value, usr.index, /*refresh_crit=*/true);
         }
     }
 
@@ -1116,8 +1126,8 @@ class SAPlacer
         if (cfg.timing_driven) {
             for (const auto &tc : md.changed_arcs) {
                 double old_cost = net_arc_tcost.at(tc.first).at(tc.second.idx());
-                double new_cost =
-                        get_timing_cost(net_by_udata.at(tc.first), net_by_udata.at(tc.first)->users.at(tc.second));
+                double new_cost = get_timing_cost(net_by_udata.at(tc.first),
+                                                  net_by_udata.at(tc.first)->users.at(tc.second), tc.second);
                 md.new_arc_costs.emplace_back(std::make_pair(tc, new_cost));
                 md.timing_delta += (new_cost - old_cost);
                 md.already_changed_arcs[tc.first][tc.second.idx()] = false;
@@ -1202,6 +1212,8 @@ class SAPlacer
     std::vector<BoundingBox> net_bounds;
     // Map net arcs to their timing cost (criticality * delay ns)
     std::vector<std::vector<double>> net_arc_tcost;
+    // Criticalities are refreshed with timing analysis and reused for incremental move scoring
+    std::vector<std::vector<float>> net_arc_crit;
 
     // Fast lookup for cell to clusters
     dict<ClusterId, std::vector<CellInfo *>> cluster2cell;
