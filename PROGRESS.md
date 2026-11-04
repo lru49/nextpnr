@@ -23,3 +23,5 @@ ACK 2026-11-04T10:34Z lane2: block 1
 - Candidate/reference exits 1/1; complete FASM and report bytes, parsed reports, full router history and checksums are identical. Identity and QoR pass.
 - Reference -> candidate: whole wall 414.80 -> 412.47 s (**-0.5617%**), Router2 303.14 -> 302.41 s (**-0.2408%**), HeAP 45.84 -> 44.28 s (-3.4031%), analytic iteration sum 43.08 -> 41.72 s (-3.1569%), SA unchanged, peak RSS 1,558,080 -> 1,559,992 KiB (+0.1227%).
 - Decision: **ABANDON `perf/l2-heap-cell-location-index`: identity passes, but both whole-wall and Router2 gains are below the required 3.0%.** No second B1 pair, B2 run, merge or accepted tag. No lane-2 benchmark process remains.
+
+ACK 2026-11-04T11:04Z lane2: block 2
