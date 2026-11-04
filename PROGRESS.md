@@ -173,3 +173,13 @@ ACK 2026-11-04T14:26Z lane2: block 8
 ## 2026-11-04T15:26:34Z — full-model B2 progress
 
 - B2 tier-2 (reference nondeterministic) remains active with valid drivers 817662 (candidate core 18) and 817663 (reference core 19), cap 8460 s. Status: `{"candidate": {"analytic_iteration": 28, "analytic_last_s": 8.4, "full_model_marker": false, "router_iteration": null}, "reference": {"analytic_iteration": 28, "analytic_last_s": 9.15, "full_model_marker": false, "router_iteration": null}}`. No verdict or candidate metric has been taken from the discarded launcher attempt.
+
+
+## 2026-11-04T15:28:15Z — B2 tier-2 (reference nondeterministic), block 9 duplicate record
+
+- B2 tier-2 (reference nondeterministic): full-model r1 uses result root `20261104T144924Z-fast-pip-delay-source-bypass-full-model-b2-r1-tier2`, launched from the 14:49:24Z build/provenance root; valid pair started 14:57:11Z, candidate core 18, reference core 19, cap 8460 s and kill rule 141 min. Supervisor killed the remaining duplicate 807xxx child tree by pid at about 15:26Z. The surviving valid tree is 817662-817669 with `/usr/bin/time -v` wrappers; only its timing/output artifacts are eligible. Active matching pids at this check: `[817662, 817663, 817664, 817665, 817666, 817667, 817668, 817669]`.
+- B2 tier-2 (reference nondeterministic): current valid directories each hold one command/log/driver set; the discarded attempt is isolated under `invalid-launch-no-exit-capture`. Final verification that exactly one `time.txt`, report and FASM exists per valid side remains pending while the pair runs. Fast-model and full-model Fmax results are likewise pending.
+- PortRef iteration is ABANDONED at the B1 timing gate (wall +0.0025%, Router2 +0.0854%), claim DONE at 14:44Z in claims commit `998a7152`; no merge, B2 or bitstreams.
+- S3 status: all valid and discarded run artifacts are under the result root. No bitstreams are built for `5d36ce50`, as block 8 explicitly assigns those to the one-shot lane; no new candidate has been accepted.
+
+ACK 2026-11-04T15:26Z lane2: block 9
