@@ -71,3 +71,9 @@ ACK 2026-11-04T12:04Z lane2: block 4
 ## 2026-11-04T13:13:34Z â B2 tier-2 pairs at 30 minutes
 
 - **B2 tier-2 (reference nondeterministic)** pair 1 remains live: nextpnr PIDs 569359 (candidate core 26) and 569358 (reference core 27), elapsed 29m41s. Pair 2 remains live: PIDs 571552 (candidate core 18) and 571551 (reference core 19), elapsed 28m31s. No exit files yet; no candidate metrics inspected; both remain well below the 141-minute kill threshold.
+
+## 2026-11-04T13:15:30Z â block 5 ACK; next candidate claimed
+
+- Block 5 item 1 was recorded with both B2 driver PIDs, cores and result directories in the 12:45Z entry and refreshed at 13:13Z. Cores 22-23 remain idle. Claimed `perf/l2-bel-location-flat` at 2026-11-04T13:15:29Z for HeAP bel-location lookup flat storage; build will use cores 28-39 while both B2 pairs continue.
+
+ACK 2026-11-04T13:04Z lane2: block 5
