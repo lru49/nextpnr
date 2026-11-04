@@ -152,6 +152,19 @@ void Arch::load_chipdb(const std::string &path)
         IdString::initialize_add(this, chip_info->extra_constids->bba_ids[i].get(),
                                  i + chip_info->extra_constids->known_id_count);
     }
+    init_pip_bindings();
+}
+
+void Arch::init_pip_bindings()
+{
+    pip_tile_offsets.resize(chip_info->tile_insts.ssize() + 1);
+    size_t pip_count = 0;
+    for (int tile = 0; tile < chip_info->tile_insts.ssize(); tile++) {
+        pip_tile_offsets[tile] = pip_count;
+        pip_count += chip_tile_info(chip_info, tile).pips.size();
+    }
+    pip_tile_offsets.back() = pip_count;
+    pip_bindings.assign(pip_count, nullptr);
 }
 
 void Arch::set_speed_grade(const std::string &speed)
