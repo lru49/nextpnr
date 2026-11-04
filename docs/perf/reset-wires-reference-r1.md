@@ -2,7 +2,7 @@
 
 ## Status
 
-**B1 RUNNING on 2026-11-04.** Candidate `perf/reset-wires-reference-r1` source `1047f166607a833849e9aa1a05d397219e1cb820` is based directly on `40d3b873a9bbea1e0fbc399df5ee3c4eae3cbd39`. Candidate binary SHA-256 is `5faf3b55cd9de970d3d5316b6980b65d4cc5cb67fe22f5ce4f11e300bdc86c2a`. No B2 run is permitted while the B2 reference remains nondeterministic.
+**ABANDONED on 2026-11-04: B1 identity passed, both timing gates failed.** Candidate `perf/reset-wires-reference-r1` source `1047f166607a833849e9aa1a05d397219e1cb820` is based directly on `40d3b873a9bbea1e0fbc399df5ee3c4eae3cbd39`. Candidate binary SHA-256 is `5faf3b55cd9de970d3d5316b6980b65d4cc5cb67fe22f5ce4f11e300bdc86c2a`. No B2, rerun, merge or tag is permitted.
 
 ## Build and launch
 
@@ -19,3 +19,9 @@ Build once in Release/IPO mode with both C and C++ compiler launchers set to `cc
 Before candidate metrics are read, the reference must reproduce complete FASM SHA-256 `9885b5d11288445a488e53aa7e3059a1411fb886046d246a2d3289ad6cd30eb0`, report SHA-256 `48c54a90b33497a37ebe2a5e44d912c8e89b3552d840d5f0f9c3d9bed8fec2f0`, checksums `0x86b726c6/0xeb2c108e/0xeea7ec3a`, history `91/284240/0/0/0` and Fmax 41.83 MHz.
 
 Require normal completion with expected timing-only exit 1, byte-identical complete FASM, identical report bytes and parsed report, router history, checksums, Fmax, utilization and final overuse, plus at least 3.0% paired improvement in both Router2 and whole-wall time. Any identity, QoR or timing failure abandons the candidate with no B2 or rerun. A passing screen requires further confirmation before acceptance.
+
+## B1 result
+
+Before candidate metrics were inspected, the reference passed every reproduction check: expected timing-only exit 1, normal completion, complete FASM `9885b5d11288445a488e53aa7e3059a1411fb886046d246a2d3289ad6cd30eb0`, report `48c54a90b33497a37ebe2a5e44d912c8e89b3552d840d5f0f9c3d9bed8fec2f0`, checksums `0x86b726c6/0xeb2c108e/0xeea7ec3a`, history `91/284240/0/0/0` and Fmax 41.83 MHz. The candidate then completed normally with expected exit 1 and comparison exit 0; complete FASM/report bytes, parsed report, history, checksums, Fmax, utilization and final overuse matched.
+
+Reference to candidate whole wall was **412.62 to 409.31 s (-0.8022%)**; Router2 was **299.79 to 296.93 s (-0.9540%)**. Both gains are below 3.0%, so the candidate is abandoned. Peak RSS was 1,558,016 to 1,558,892 KiB (+0.0562%). Artifacts are under `bench/results/20261104T120700Z-reset-wires-reference-r1-b1`.
