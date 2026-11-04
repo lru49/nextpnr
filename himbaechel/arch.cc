@@ -327,6 +327,10 @@ bool Arch::route()
     archInfoToAttributes();
     uarch->postRouteArchInfo();
     set_fast_pip_delays(false);
+    // Keep the fast-model results in --report and log the full model separately for tier-2 comparisons.
+    log_info("full-model Fmax and critical path (fast pip delays disabled):\n");
+    timing_analysis(getCtx(), true /* slack_histogram */, true /* print_fmax */, true /* print_path */,
+                    true /* warn_on_failure */, false /* update_results */);
     return result;
 }
 
