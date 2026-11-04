@@ -101,3 +101,8 @@ ACK 2026-11-04T13:04Z lane2: block 5
 |---|---|---|---|---|---|
 | HeAP cell-location index | -0.56% / -0.24% | not run | identical | y | abandoned below timing floor |
 | Fast pip-delay source bypass | -6.40%, -5.70% / -8.70%, -7.65% | -3.71%, -4.52% / -6.29%, -7.45% | equal or better | B1 y; B2 r1 n, r2 y | tier-2 gates passed |
+
+
+## 2026-11-04T13:31:12Z — fast pip-delay source bypass integration
+
+- Fetched and rebased on `origin/perf/accepted-qor`; the base remains `40d3b873a9bbea1e0fbc399df5ee3c4eae3cbd39`, so no lane-1 merge invalidates the measurements. Integrating with a no-ff merge and annotated tag `perf-20261104-tier2-fast-pip-delay-source-bypass`; parent tag `perf-accepted-qor-revert-02411403`. No accepted-identical merge because the candidate is tier 2.
