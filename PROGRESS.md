@@ -41,12 +41,15 @@ ACK 2026-11-04T11:04Z lane2: block 2
 - Candidate SHA-256 `47fc3bfbc2eab4f347f5d6e299000d84fd31eb376f58c268a13142a52b169776`; reference SHA-256 `c33194144895cd1a95098fe9ddfdfbb2c43a1c552e7c07e9b0ead979082fcdc3`.
 - Generated version remains `perf-accepted-qor-revert-40d3b873`; reference-chipdb `--test` passed on build core 28.
 
+ACK 2026-11-04T11:34Z lane2: block 2
+
 ## 2026-11-04T11:55:52Z — fast pip-delay source bypass B1 PASS
 
-- Valid pair `20261104T114735Z-fast-pip-delay-source-bypass-b1`; reference reproduced before candidate metrics. An earlier launcher error executed only a reference, no candidate, and was discarded as a comparison.
-- Identity PASS: complete FASM/report bytes, parsed report, router history, checksums, Fmax and final iteration 91 all equal; expected timing exits 1/1. FASM SHA-256 `9885b5d11288445a488e53aa7e3059a1411fb886046d246a2d3289ad6cd30eb0`.
+- Valid pair `20261104T114735Z-fast-pip-delay-source-bypass-b1` (candidate core 18, reference core 19). An earlier launcher attempt ran only the reference because of a shell backgrounding error; it executed no candidate and was discarded as a comparison. Its reference reproduced the stored reference exactly.
+- Reference reproduction PASS before candidate metrics: expected timing exit 1, normal completion/routing, stored FASM/report SHA-256, checksums and complete router history all matched.
+- Candidate/reference identity PASS: complete FASM and report byte identity, parsed report, router history, checksums, Fmax and final iteration 91 all equal. FASM SHA-256 `9885b5d11288445a488e53aa7e3059a1411fb886046d246a2d3289ad6cd30eb0`.
 - Reference → candidate: wall 399.17 → 373.61 s (-6.4033%), Router2 289.52 → 264.34 s (-8.6972%), HeAP 45.42 → 44.84 s. BOTH timing gates PASS.
-- No B2 pair started while the B2 reference remains unreproduced (directive block 3). Next action is reference-only B2 reproduction, not a candidate pair.
+- No B2 pair started: directive block 3 first requires a reproduced B2 reference.
 
 ## 2026-11-04T11:59:47Z â two B2 reference-only reproductions launched
 
@@ -77,3 +80,29 @@ ACK 2026-11-04T12:04Z lane2: block 4
 - Block 5 item 1 was recorded with both B2 driver PIDs, cores and result directories in the 12:45Z entry and refreshed at 13:13Z. Cores 22-23 remain idle. Claimed `perf/l2-bel-location-flat` at 2026-11-04T13:15:29Z for HeAP bel-location lookup flat storage; build will use cores 28-39 while both B2 pairs continue.
 
 ACK 2026-11-04T13:04Z lane2: block 5
+
+
+## 2026-11-04T13:30:00Z — fast pip-delay source bypass meets tier-2 acceptance gates
+
+- **B2 tier-2 (reference nondeterministic)** r1 `20261104T124335Z-fast-pip-delay-source-bypass-b2-r1-tier2`: reference reproduced stored FASM/report/history/checksums exactly. Candidate/reference exits 0/0, routing converged, utilization 52/52 equal, final overuse/archfail 0/0. Fmax improved 30.582908630371094 -> 30.67860984802246 MHz. Wall 2272.83 -> 2188.52 s (**-3.7095%**), Router2 1287.45 -> 1206.45 s (**-6.2915%**), peak RSS +0.7846%. FASM differs; GNU `diff -U0` counted 22,114 all / 22,113 payload hunks, 15,537 added, 15,351 deleted and 70,203 changed non-comment lines (6,690,135 diff bytes).
+- **B2 tier-2 (reference nondeterministic)** r2 `20261104T124445Z-fast-pip-delay-source-bypass-b2-r2-tier2`: reference did not reproduce the stored reference, as already recorded; the paired candidate is byte-identical in complete FASM/report, parsed report, history and checksums. Exits 0/0, routing converged, utilization 52/52 equal, final overuse/archfail 0/0 and Fmax equal. Wall 2234.09 -> 2133.10 s (**-4.5204%**), Router2 1253.49 -> 1160.15 s (**-7.4464%**), peak RSS +0.4501%. FASM diff is zero.
+- QoR table (reference -> candidate):
+
+| Pair | Tier/label | Final Fmax (MHz) | Utilization | Final overuse / overuse total / archfail | Converged | Iterations | FASM |
+|---|---|---|---|---|---|---|---|
+| B1 r1 | identity | 41.830501556396484 -> 41.830501556396484 | 52/52 equal | 0/0/0 -> 0/0/0 | yes -> yes | 91 -> 91 | identical |
+| B1 r2 | identity | 41.830501556396484 -> 41.830501556396484 | 52/52 equal | 0/0/0 -> 0/0/0 | yes -> yes | 91 -> 91 | identical |
+| B2 r1 | B2 tier-2 (reference nondeterministic) | 30.582908630371094 -> 30.67860984802246 | 52/52 equal | 0/0/0 -> 0/0/0 | yes -> yes | 17 -> 16 | different; improved QoR |
+| B2 r2 | B2 tier-2 (reference nondeterministic) | 30.67860984802246 -> 30.67860984802246 | 52/52 equal | 0/0/0 -> 0/0/0 | yes -> yes | 16 -> 16 | identical |
+
+- Decision: **ACCEPT `perf/l2-fast-pip-delay-source-bypass` under tier 2, not tier 1.** Both B1 pairs exceed 3% wall and Router2 with exact identity; both B2 pairs exceed the 3% tier-2 wall floor and have equal-or-better Fmax, unchanged utilization, zero final overuse and normal convergence. Origin accepted-qor remains `40d3b873`, so no lane-1 merge requires re-measurement. Integration merge and annotated tag follow.
+
+| Change | B1 wall / Router2 | B2 wall / Router2 | QoR | FASM | Status |
+|---|---|---|---|---|---|
+| HeAP cell-location index | -0.56% / -0.24% | not run | identical | y | abandoned below timing floor |
+| Fast pip-delay source bypass | -6.40%, -5.70% / -8.70%, -7.65% | -3.71%, -4.52% / -6.29%, -7.45% | equal or better | B1 y; B2 r1 n, r2 y | tier-2 gates passed |
+
+
+## 2026-11-04T13:31:12Z — fast pip-delay source bypass integration
+
+- Fetched and rebased on `origin/perf/accepted-qor`; the base remains `40d3b873a9bbea1e0fbc399df5ee3c4eae3cbd39`, so no lane-1 merge invalidates the measurements. Integrating with a no-ff merge and annotated tag `perf-20261104-tier2-fast-pip-delay-source-bypass`; parent tag `perf-accepted-qor-revert-02411403`. No accepted-identical merge because the candidate is tier 2.
