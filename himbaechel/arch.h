@@ -601,6 +601,12 @@ struct Arch : BaseArch<ArchRanges>
     }
     DelayQuad getPipDelay(PipId pip) const override
     {
+        if (fast_pip_delays && fast_pip_delay_table_ready)
+            return DelayQuad(fast_pip_delay_table[pip_tile_offsets[pip.tile] + pip.index]);
+        return compute_pip_delay(pip);
+    }
+    DelayQuad compute_pip_delay(PipId pip) const
+    {
         auto &pip_data = chip_pip_info(chip_info, pip);
         auto pip_tmg = get_pip_timing(pip_data);
         if (pip_tmg != nullptr) {
@@ -944,6 +950,8 @@ struct Arch : BaseArch<ArchRanges>
     // Load capacitance and drive resistance for nodes
     // TODO: does this `dict` hurt routing performance too much?
     bool fast_pip_delays = false;
+    bool fast_pip_delay_table_ready = false;
+    std::vector<delay_t> fast_pip_delay_table;
     dict<WireId, uint64_t> drive_res;
     dict<WireId, uint64_t> load_cap;
 

@@ -480,6 +480,16 @@ void Arch::set_fast_pip_delays(bool fast_mode)
         }
     }
     fast_pip_delays = fast_mode;
+    if (fast_mode && !fast_pip_delay_table_ready) {
+        fast_pip_delay_table.resize(pip_bindings.size());
+        for (int tile = 0; tile < chip_info->tile_insts.ssize(); tile++) {
+            size_t offset = pip_tile_offsets[tile];
+            int pip_count = chip_tile_info(chip_info, tile).pips.ssize();
+            for (int index = 0; index < pip_count; index++)
+                fast_pip_delay_table[offset + index] = compute_pip_delay(PipId(tile, index)).maxDelay();
+        }
+        fast_pip_delay_table_ready = true;
+    }
 }
 
 // Helper for cell timing lookups
