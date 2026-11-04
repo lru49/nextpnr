@@ -38,3 +38,4 @@ CLAIM 2026-11-04T16:02:21Z lane1 perf/processed-sinks-reuse-r1 Router2/processed
 CLAIM 2026-11-04T16:18:26Z lane2 perf/l2-heap-cluster-offset-reuse HeAP/build_equations+cluster-offset-reuse
 ABANDONED 2026-11-04T16:26:00Z lane1 perf/bind-no-resource-r1 B1 identity PASS; wall -0.0257%, Router2 +0.2338%, both timing gates FAIL
 ABANDONED 2026-11-04T16:26:00Z lane1 perf/processed-sinks-reuse-r1 B1 identity PASS; wall -0.9878%, Router2 -0.9624%, both timing gates FAIL
+ABANDONED 2026-11-04T16:43:23Z lane2 perf/l2-heap-cluster-offset-reuse B1-r1 identity PASS but wall +0.4297% and Router2 +0.7232%; result 20261104T162736Z-heap-cluster-offset-reuse-b1-r1
