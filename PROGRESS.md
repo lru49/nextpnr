@@ -52,3 +52,11 @@ ACK 2026-11-04T11:04Z lane2: block 2
 
 - Root `20261104T115910Z-b2-reference-repro`; drivers 504643 (r1, reference core 19) and 504644 (r2, reference core 23), seed 1, one thread, 100 MHz, 8460 s cap. These are REFERENCE-ONLY runs; no candidate B2 pair or other lane-2 benchmark is active.
 - Verified reference binary SHA-256 `c33194144895cd1a95098fe9ddfdfbb2c43a1c552e7c07e9b0ead979082fcdc3` and original B2 input SHA-256 `9271cdc99c199854e89a21615481fd541171e9b742c257140e57a46e6323c7f1`. Both outputs must reproduce the stored reference and each other before any candidate B2 pair.
+
+## 2026-11-04T12:29:27Z â block 4 ACK; B1 confirmation live; B2 tier-2 plan
+
+- B1 confirmation pair `20261104T122843Z-fast-pip-delay-source-bypass-b1-r2`: candidate driver 544364/core 26, reference driver 544363/core 27, seed 1, one thread, 100 MHz, 1920 s cap, detached with logs/PID files. Reference reproduction will be checked before candidate metrics.
+- B2 plan from block 4: first pair on cores 26-27 after B1 confirmation passes; second on cores 18-19 after the reference reproduction runs finish. Every B2 result line will be labeled **B2 tier-2 (reference nondeterministic)**.
+- At 30 minutes the two reference-only B2 runs remain live on cores 19/23 (nextpnr PIDs 504650/504651), within the 141-minute cap; no output has been compared yet.
+
+ACK 2026-11-04T12:04Z lane2: block 4
