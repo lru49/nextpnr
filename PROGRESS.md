@@ -63,3 +63,10 @@ ACK 2026-11-04T11:34Z lane2: block 2
 - At 30 minutes the two reference-only B2 runs remain live on cores 19/23 (nextpnr PIDs 504650/504651), within the 141-minute cap; no output has been compared yet.
 
 ACK 2026-11-04T12:04Z lane2: block 4
+
+## 2026-11-04T12:45:20Z â second B1 PASS; B2 reference status; two B2 tier-2 pairs live
+
+- B1 confirmation `20261104T122843Z-fast-pip-delay-source-bypass-b1-r2`: PASS. Reference reproduced stored FASM/report/history/checksums/final iteration; candidate FASM/report bytes, parsed report, history, checksums and final iteration 91 all match. Wall 419.49 -> 395.56 s (-5.7045%), Router2 306.95 -> 283.47 s (-7.6495%); exits 1/1 with normal timing-only completion.
+- **B2 tier-2 (reference nondeterministic)** reference-only root `20261104T115910Z-b2-reference-repro`: both runs completed normally with exit 0. r1 FASM `18d00b1ccde28e327fd7fc41024487dc501e4d36a4f509a7dbb178f5e99e5b4a`; r2 FASM `65d9ca5e7b08292ec7248a99be6e8c352330875a1f6b78d942924822b5ffb216` (DIFFER). Reports match each other at `62fd9c1b31399315491fd7ee694c51f868d108f95001d29eb659204a78fe9058`, but neither FASM/report matches the stored reference `403d98cb...` / `ca496ca3...`; the reference is not twice-reproduced.
+- **B2 tier-2 (reference nondeterministic)** pair 1 `20261104T124335Z-fast-pip-delay-source-bypass-b2-r1-tier2` launched: candidate driver 569352/core 26, reference driver 569351/core 27, 8460 s cap.
+- **B2 tier-2 (reference nondeterministic)** pair 2 `20261104T124445Z-fast-pip-delay-source-bypass-b2-r2-tier2` launched after the reference-only runs finished: candidate driver 571545/core 18, reference driver 571544/core 19, 8460 s cap.
