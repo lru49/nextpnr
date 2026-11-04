@@ -255,6 +255,7 @@ struct Router2
             wire_count += tile_wire_sizes[tile];
         }
         wire_to_idx.assign(wire_count, -1);
+        wire_to_resource.assign(wire_count, -1);
 #endif
     }
 
@@ -314,7 +315,11 @@ struct Router2
     }
 
     dict<GroupId, int> resource_to_idx;
+#ifdef ARCH_HIMBAECHEL
+    std::vector<int> wire_to_resource;
+#else
     dict<WireId, int> wire_to_resource;
+#endif
     std::vector<PerResourceData> flat_resources;
 
     PerResourceData &resource_data(GroupId r) { return flat_resources[resource_to_idx.at(r)]; }
@@ -337,8 +342,14 @@ struct Router2
             }
             for (auto pip : ctx->getGroupPips(resource_key)) {
                 auto dest_wire = ctx->getPipDstWire(pip);
+#ifdef ARCH_HIMBAECHEL
+                auto &resource_index = wire_to_resource.at(tile_wire_offsets[dest_wire.tile] + dest_wire.index);
+                if (resource_index < 0)
+                    resource_index = entry->second;
+#else
                 if (wire_to_resource.count(dest_wire) == 0)
                     wire_to_resource.insert({dest_wire, entry->second});
+#endif
             }
         }
     }
@@ -541,9 +552,14 @@ struct Router2
                         ((std::abs(pl.x - nd.cx) + std::abs(pl.y - nd.cy)) / float(nd.hpwl));
         }
 
+#ifdef ARCH_HIMBAECHEL
+        int resource_index = wire_to_resource.at(tile_wire_offsets[wire.tile] + wire.index);
+#else
         auto resource_key = wire_to_resource.find(wire);
-        if (resource_key != wire_to_resource.end()) {
-            auto &rd = flat_resources.at(resource_key->second);
+        int resource_index = resource_key == wire_to_resource.end() ? -1 : resource_key->second;
+#endif
+        if (resource_index >= 0) {
+            auto &rd = flat_resources.at(resource_index);
             resource_hist_cost = 1.0f + crit_weight * (rd.hist_cong_cost - 1.0f);
             resource_present_cost = 1.0f + rd.value_count.size() * curr_cong_weight * crit_weight;
         }
