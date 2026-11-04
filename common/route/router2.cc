@@ -29,6 +29,7 @@
 #include "router2.h"
 
 #include <algorithm>
+#include <atomic>
 #include <boost/container/flat_map.hpp>
 #include <chrono>
 #include <deque>
@@ -113,6 +114,7 @@ struct Router2
         // The notional location of the wire, to guarantee thread safety
         int16_t x = 0, y = 0;
         // Visit data
+        uint64_t visit_generation = 0;
         PipId pip_fwd, pip_bwd;
         bool visited_fwd = false, visited_bwd = false;
         float cost_fwd = 0.0, cost_bwd = 0.0;
@@ -224,6 +226,7 @@ struct Router2
     dict<WireId, int> wire_to_idx;
 #endif
     std::vector<PerWireData> flat_wires;
+    std::atomic<uint64_t> next_visit_generation{0};
 
     int wire_index(WireId w) const
     {
@@ -381,7 +384,7 @@ struct Router2
         // Special case where one net has multiple logical arcs to the same physical sink
         pool<WireId> processed_sinks;
 
-        std::vector<int> dirty_wires;
+        uint64_t visit_generation = 0;
 
         // Thread bounding box
         BoundingBox bb;
@@ -807,15 +810,7 @@ struct Router2
 
     void reset_wires(ThreadContext &t)
     {
-        for (auto w : t.dirty_wires) {
-            flat_wires[w].pip_fwd = PipId();
-            flat_wires[w].pip_bwd = PipId();
-            flat_wires[w].visited_fwd = false;
-            flat_wires[w].visited_bwd = false;
-            flat_wires[w].cost_fwd = 0.0;
-            flat_wires[w].cost_bwd = 0.0;
-        }
-        t.dirty_wires.clear();
+        t.visit_generation = next_visit_generation.fetch_add(1, std::memory_order_relaxed) + 1;
     }
 
     // These nets have very-high-fanout pips and special rules must be followed (only working backwards) to avoid
@@ -847,8 +842,11 @@ struct Router2
     void set_visited_fwd(ThreadContext &t, int wire, PipId pip, float cost)
     {
         auto &wd = flat_wires.at(wire);
-        if (!wd.visited_fwd && !wd.visited_bwd)
-            t.dirty_wires.push_back(wire);
+        if (wd.visit_generation != t.visit_generation) {
+            wd.visit_generation = t.visit_generation;
+            wd.visited_fwd = false;
+            wd.visited_bwd = false;
+        }
         wd.pip_fwd = pip;
         wd.visited_fwd = true;
         wd.cost_fwd = cost;
@@ -856,20 +854,25 @@ struct Router2
     void set_visited_bwd(ThreadContext &t, int wire, PipId pip, float cost)
     {
         auto &wd = flat_wires.at(wire);
-        if (!wd.visited_fwd && !wd.visited_bwd)
-            t.dirty_wires.push_back(wire);
+        if (wd.visit_generation != t.visit_generation) {
+            wd.visit_generation = t.visit_generation;
+            wd.visited_fwd = false;
+            wd.visited_bwd = false;
+        }
         wd.pip_bwd = pip;
         wd.visited_bwd = true;
         wd.cost_bwd = cost;
     }
 
-    bool was_visited_fwd(int wire, float cost)
+    bool was_visited_fwd(ThreadContext &t, int wire, float cost)
     {
-        return flat_wires.at(wire).visited_fwd && flat_wires.at(wire).cost_fwd <= cost;
+        const auto &wd = flat_wires.at(wire);
+        return wd.visit_generation == t.visit_generation && wd.visited_fwd && wd.cost_fwd <= cost;
     }
-    bool was_visited_bwd(int wire, float cost)
+    bool was_visited_bwd(ThreadContext &t, int wire, float cost)
     {
-        return flat_wires.at(wire).visited_bwd && flat_wires.at(wire).cost_bwd <= cost;
+        const auto &wd = flat_wires.at(wire);
+        return wd.visit_generation == t.visit_generation && wd.visited_bwd && wd.cost_bwd <= cost;
     }
 
     float get_arc_crit(NetInfo *net, store_index<PortRef> i)
@@ -1004,7 +1007,7 @@ struct Router2
                     auto curr = t.fwd_queue.top();
                     t.fwd_queue.pop();
                     ++explored;
-                    if (was_visited_bwd(curr.wire, std::numeric_limits<float>::max())) {
+                    if (was_visited_bwd(t, curr.wire, std::numeric_limits<float>::max())) {
                         // Meet in the middle; done
                         midpoint_wire = curr.wire;
                         break;
@@ -1041,7 +1044,7 @@ struct Router2
                         WireScore next_score;
                         float base_cost = cfg.get_base_cost(ctx, next, dh, crit_weight);
                         next_score.delay = curr.score.delay + base_cost;
-                        if (was_visited_fwd(next_idx, next_score.delay)) {
+                        if (was_visited_fwd(t, next_idx, next_score.delay)) {
                             // Don't expand the same node twice.
                             continue;
                         }
@@ -1074,7 +1077,7 @@ struct Router2
                             best_midpoint_cost = curr.score.cost;
                         }
                     } else {
-                        if (was_visited_fwd(curr.wire, std::numeric_limits<float>::max())) {
+                        if (was_visited_fwd(t, curr.wire, std::numeric_limits<float>::max())) {
                             // Meet in the middle; done
                             midpoint_wire = curr.wire;
                             break;
@@ -1114,7 +1117,7 @@ struct Router2
                         WireScore next_score;
                         float base_cost = cfg.get_base_cost(ctx, next, uh, crit_weight);
                         next_score.delay = curr.score.delay + base_cost;
-                        if (was_visited_bwd(next_idx, next_score.delay)) {
+                        if (was_visited_bwd(t, next_idx, next_score.delay)) {
                             // Don't expand the same node twice.
                             continue;
                         }
@@ -1139,7 +1142,7 @@ struct Router2
                 bind_pip_internal(nd, i, midpoint_wire, PipId());
             } else {
                 int cursor_bwd = midpoint_wire;
-                while (was_visited_fwd(cursor_bwd, std::numeric_limits<float>::max())) {
+                while (was_visited_fwd(t, cursor_bwd, std::numeric_limits<float>::max())) {
                     PipId pip = flat_wires.at(cursor_bwd).pip_fwd;
                     if (pip == PipId() && cursor_bwd != src_wire_idx)
                         break;
@@ -1186,7 +1189,7 @@ struct Router2
             }
 
             int cursor_fwd = midpoint_wire;
-            while (was_visited_bwd(cursor_fwd, std::numeric_limits<float>::max())) {
+            while (was_visited_bwd(t, cursor_fwd, std::numeric_limits<float>::max())) {
                 PipId pip = flat_wires.at(cursor_fwd).pip_bwd;
                 if (pip == PipId()) {
                     break;
