@@ -316,6 +316,7 @@ struct Router2
     dict<GroupId, int> resource_to_idx;
     dict<WireId, int> wire_to_resource;
     std::vector<PerResourceData> flat_resources;
+    bool has_routing_resources = false;
 
     PerResourceData &resource_data(GroupId r) { return flat_resources[resource_to_idx.at(r)]; }
 
@@ -341,6 +342,7 @@ struct Router2
                     wire_to_resource.insert({dest_wire, entry->second});
             }
         }
+        has_routing_resources = !wire_to_resource.empty();
     }
 
     struct QueuedWire
@@ -1029,12 +1031,14 @@ struct Router2
                         if (fnd_wire != nd.wires.end() && fnd_wire->second.first != dh)
                             continue;
                         // Don't allow the same resource to be bound to the same net with a different value
-                        auto resource_key = ctx->getResourceKeyForPip(dh);
-                        if (resource_key != GroupId()) {
-                            auto fnd_resource = nd.resources.find(resource_key);
-                            if (fnd_resource != nd.resources.end() &&
-                                fnd_resource->second.value != ctx->getResourceValueForPip(dh))
-                                continue;
+                        if (has_routing_resources) {
+                            auto resource_key = ctx->getResourceKeyForPip(dh);
+                            if (resource_key != GroupId()) {
+                                auto fnd_resource = nd.resources.find(resource_key);
+                                if (fnd_resource != nd.resources.end() &&
+                                    fnd_resource->second.value != ctx->getResourceValueForPip(dh))
+                                    continue;
+                            }
                         }
                         if (!thread_test_wire(t, nwd))
                             continue; // thread safety issue
@@ -1102,12 +1106,14 @@ struct Router2
                         if (nwd.reserved_net != -1 && nwd.reserved_net != net->udata)
                             continue;
                         // Don't allow the same resource to be bound to the same net with a different value
-                        auto resource_key = ctx->getResourceKeyForPip(uh);
-                        if (resource_key != GroupId()) {
-                            auto fnd_resource = nd.resources.find(resource_key);
-                            if (fnd_resource != nd.resources.end() &&
-                                fnd_resource->second.value != ctx->getResourceValueForPip(uh))
-                                continue;
+                        if (has_routing_resources) {
+                            auto resource_key = ctx->getResourceKeyForPip(uh);
+                            if (resource_key != GroupId()) {
+                                auto fnd_resource = nd.resources.find(resource_key);
+                                if (fnd_resource != nd.resources.end() &&
+                                    fnd_resource->second.value != ctx->getResourceValueForPip(uh))
+                                    continue;
+                            }
                         }
                         if (!thread_test_wire(t, nwd))
                             continue; // thread safety issue
