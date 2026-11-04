@@ -11,3 +11,4 @@ CLAIM 2026-11-04T11:40:00Z lane1 perf/route-cost-source-uses-r1 Router2/score_wi
 ABANDONED 2026-11-04T11:46:00Z lane1 perf/visit-data-access-r1 B1 identity PASS; wall +1.2530%, Router2 +1.2417%, both timing gates FAIL
 ABANDONED 2026-11-04T12:00:00Z lane1 perf/route-cost-source-uses-r1 B1 identity PASS; wall -0.4633%, Router2 -0.6800%, both timing gates FAIL
 CLAIM 2026-11-04T12:01:00Z lane1 perf/reset-wires-reference-r1 Router2/reset_wires-access-reuse
+CLAIM 2026-11-04T12:04Z lane1 b2-determinism-root-cause Router2 per-iteration (rip-up order, heap pops, hash iteration)
