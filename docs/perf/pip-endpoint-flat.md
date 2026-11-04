@@ -26,3 +26,11 @@ Before candidate metrics are read, the reference side must reproduce complete FA
 Source commit `642aa76cdcb00c7b05b9910aa5fc008ddf72d39c` is pushed. The clean Himbaechel-Xilinx Release/IPO build passed 63/63 with both C and C++ compiler launchers set to `ccache`. Build wall was 130.31 s and peak RSS was 2,677,960 KiB. The `--version` smoke passed as `perf-pip-endpoint-flat-40d3b873`; binary SHA-256 is `f5c1e6f886f1e32af55ec19189c9295875bd1e5f5ed775310c96b4f8c654b8cd`.
 
 The single B1 screening pair is ready to launch. No benchmark result or acceptance claim exists yet.
+
+## B1 result and decision
+
+Pair `20261104T073151Z-pip-endpoint-flat-b1` used candidate core 0 and reference core 1. The reference reproduced the stored FASM, report, checksums, router result and Fmax before candidate metrics were inspected. Both sides completed normally with the expected timing exit 1; report bytes and parsed reports, router history, checksums, iteration 91/final route 0/0/0 and Fmax 41.83 MHz match.
+
+Raw complete FASM differs only in the line-1 build version. Reference/candidate complete FASM SHA-256 values are `9885b5d11288445a488e53aa7e3059a1411fb886046d246a2d3289ad6cd30eb0` and `b4651cd8ae3f19d3148c8a34ec70c48faebd9203b64aa6fa1f178ae4953bae19`; the bodies after line 1 are byte-identical with SHA-256 `45c231cca7f541233e2a98f318860ac62cfb31683ae9e0ec64b769a196f0db0f`.
+
+Timing decisively fails the kill criterion: wall 398.66 -> 417.21 s (+4.6531%), Router2 290.39 -> 308.91 s (+6.3776%), and peak RSS 1,557,900 -> 2,138,384 KiB (+37.2607%). **The candidate is abandoned at `642aa76c` with no second B1 pair, B2, merge or tag.** A label-only rebuild is not warranted because the timing gate independently fails.
