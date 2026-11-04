@@ -30,3 +30,4 @@ ABANDONED 2026-11-04T14:18:00Z lane1 perf/visited-check-wiredata-r1 B1 identity 
 ABANDONED 2026-11-04T14:23:00Z lane1 perf/togo-wiredata-reference-r1 B1 identity PASS; wall +0.3986%, Router2 +0.6143%, both timing gates FAIL
 CLAIM 2026-11-04T14:23:00Z lane1 perf/thread-test-wire-inline-r1 Router2/thread_test_wire direct bbox comparisons at two hot call sites
 DONE 2026-11-04T14:44:16Z lane2 perf/l2-portref-iteration ABANDONED at B1 timing gate; wall +0.0025%, Router2 +0.0854%; report/history/FASM payload equal, raw version comment differs; no merge
+ABANDONED 2026-11-04T15:23:00Z lane1 perf/thread-test-wire-inline-r1 B1 identity PASS; wall -0.6830%, Router2 -0.3048%, both timing gates FAIL
