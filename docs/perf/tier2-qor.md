@@ -63,6 +63,7 @@ R3 report bytes, parsed report, history and checksums differ; report differences
 - Candidate: `02411403c8b8ab8ecba0279802a20b6121fe0581`
 - Reference/parent: router-stack `9a83eaa0ef4b4fe52ce8395a167f92318d7fc2c3`
 - Result: **tier-2 QoR gate passes**. Both B1 pairs and B2 r1 are byte-identical; B2 r2 has identical report bytes and utilization but different FASM, history and checksums. Tier 1 is not accepted for the whole candidate.
+- Disposition: **measured, not accepted: below the tier-2 gain floor**. B1 wall +0.4% / +1.4%; B2 wall -0.1% / -0.8%; required floor -3% on both B1 and B2. Integration was reverted by `40d3b873a9bbea1e0fbc399df5ee3c4eae3cbd39`; the original acceptance tag remains as a historical record.
 
 | Pair | Design | Exit | Final Fmax (MHz) | Utilization | Final route triple | Converged | Iterations |
 |---|---|---|---|---|---|---|---|
