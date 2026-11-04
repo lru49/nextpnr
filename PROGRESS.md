@@ -40,3 +40,10 @@ ACK 2026-11-04T11:04Z lane2: block 2
 - Candidate commit `cbfc8d7a`; build `build/perf-l2-fast-pip-delay-source-bypass`: 63/63, 120.38 s, peak RSS 2,677,820 kB, ccache launchers for C and C++.
 - Candidate SHA-256 `47fc3bfbc2eab4f347f5d6e299000d84fd31eb376f58c268a13142a52b169776`; reference SHA-256 `c33194144895cd1a95098fe9ddfdfbb2c43a1c552e7c07e9b0ead979082fcdc3`.
 - Generated version remains `perf-accepted-qor-revert-40d3b873`; reference-chipdb `--test` passed on build core 28.
+
+## 2026-11-04T11:55:52Z — fast pip-delay source bypass B1 PASS
+
+- Valid pair `20261104T114735Z-fast-pip-delay-source-bypass-b1`; reference reproduced before candidate metrics. An earlier launcher error executed only a reference, no candidate, and was discarded as a comparison.
+- Identity PASS: complete FASM/report bytes, parsed report, router history, checksums, Fmax and final iteration 91 all equal; expected timing exits 1/1. FASM SHA-256 `9885b5d11288445a488e53aa7e3059a1411fb886046d246a2d3289ad6cd30eb0`.
+- Reference → candidate: wall 399.17 → 373.61 s (-6.4033%), Router2 289.52 → 264.34 s (-8.6972%), HeAP 45.42 → 44.84 s. BOTH timing gates PASS.
+- No B2 pair started while the B2 reference remains unreproduced (directive block 3). Next action is reference-only B2 reproduction, not a candidate pair.
