@@ -591,14 +591,8 @@ struct Arch : BaseArch<ArchRanges>
         return loc;
     }
     IdString getPipType(PipId pip) const override;
-    WireId getPipSrcWire(PipId pip) const override
-    {
-        return normalise_wire(pip.tile, chip_pip_info(chip_info, pip).src_wire);
-    }
-    WireId getPipDstWire(PipId pip) const override
-    {
-        return normalise_wire(pip.tile, chip_pip_info(chip_info, pip).dst_wire);
-    }
+    WireId getPipSrcWire(PipId pip) const override { return pip_endpoint(pip).src; }
+    WireId getPipDstWire(PipId pip) const override { return pip_endpoint(pip).dst; }
     DelayQuad getPipDelay(PipId pip) const override
     {
         auto &pip_data = chip_pip_info(chip_info, pip);
@@ -643,6 +637,16 @@ struct Arch : BaseArch<ArchRanges>
     std::vector<size_t> pip_tile_offsets;
     std::vector<NetInfo *> pip_bindings;
     NetInfo *&pip_binding(PipId pip) { return pip_bindings[pip_tile_offsets[pip.tile] + pip.index]; }
+
+    struct PipEndpoints {
+        WireId src;
+        WireId dst;
+    };
+    std::vector<PipEndpoints> pip_endpoints;
+    const PipEndpoints &pip_endpoint(PipId pip) const
+    {
+        return pip_endpoints[pip_tile_offsets[pip.tile] + pip.index];
+    }
 
     bool checkPipAvail(PipId pip) const override
     {

@@ -165,6 +165,16 @@ void Arch::init_pip_bindings()
     }
     pip_tile_offsets.back() = pip_count;
     pip_bindings.assign(pip_count, nullptr);
+    pip_endpoints.resize(pip_count);
+    for (int tile = 0; tile < chip_info->tile_insts.ssize(); tile++) {
+        auto &tile_data = chip_tile_info(chip_info, tile);
+        for (size_t index = 0; index < tile_data.pips.size(); index++) {
+            auto &pip_data = tile_data.pips[index];
+            auto &endpoints = pip_endpoints[pip_tile_offsets[tile] + index];
+            endpoints.src = normalise_wire(tile, pip_data.src_wire);
+            endpoints.dst = normalise_wire(tile, pip_data.dst_wire);
+        }
+    }
 }
 
 void Arch::set_speed_grade(const std::string &speed)
