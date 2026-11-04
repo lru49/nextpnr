@@ -605,14 +605,17 @@ struct Arch : BaseArch<ArchRanges>
         auto pip_tmg = get_pip_timing(pip_data);
         if (pip_tmg != nullptr) {
             // TODO: multi corner analysis
-            WireId src = getPipSrcWire(pip);
-            uint64_t input_res = fast_pip_delays ? 0 : (drive_res.count(src) ? drive_res.at(src) : 0);
-            uint64_t input_cap = fast_pip_delays ? 0 : (load_cap.count(src) ? load_cap.at(src) : 0);
-            auto src_tmg = get_node_timing(src);
-            if (src_tmg != nullptr)
-                input_res += (src_tmg->res.slow_max / 2);
-            // Scale delay (fF * mOhm -> ps)
-            delay_t total_delay = (input_res * input_cap) / uint64_t(1e6);
+            delay_t total_delay = 0;
+            if (!fast_pip_delays) {
+                WireId src = getPipSrcWire(pip);
+                uint64_t input_res = drive_res.count(src) ? drive_res.at(src) : 0;
+                uint64_t input_cap = load_cap.count(src) ? load_cap.at(src) : 0;
+                auto src_tmg = get_node_timing(src);
+                if (src_tmg != nullptr)
+                    input_res += (src_tmg->res.slow_max / 2);
+                // Scale delay (fF * mOhm -> ps)
+                total_delay = (input_res * input_cap) / uint64_t(1e6);
+            }
             total_delay += pip_tmg->int_delay.slow_max;
 
             WireId dst = getPipDstWire(pip);
