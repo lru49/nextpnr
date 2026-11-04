@@ -93,7 +93,7 @@ ACK 2026-11-04T13:04Z lane2: block 5
 | B1 r1 | identity | 41.830501556396484 -> 41.830501556396484 | 52/52 equal | 0/0/0 -> 0/0/0 | yes -> yes | 91 -> 91 | identical |
 | B1 r2 | identity | 41.830501556396484 -> 41.830501556396484 | 52/52 equal | 0/0/0 -> 0/0/0 | yes -> yes | 91 -> 91 | identical |
 | B2 r1 | B2 tier-2 (reference nondeterministic) | 30.582908630371094 -> 30.67860984802246 | 52/52 equal | 0/0/0 -> 0/0/0 | yes -> yes | 17 -> 16 | different; improved QoR |
-| B2 r2 | B2 tier-2 (reference nondeterministic) | 30.538082122802734 -> 30.538082122802734 | 52/52 equal | 0/0/0 -> 0/0/0 | yes -> yes | 16 -> 16 | identical |
+| B2 r2 | B2 tier-2 (reference nondeterministic) | 30.67860984802246 -> 30.67860984802246 | 52/52 equal | 0/0/0 -> 0/0/0 | yes -> yes | 16 -> 16 | identical |
 
 - Decision: **ACCEPT `perf/l2-fast-pip-delay-source-bypass` under tier 2, not tier 1.** Both B1 pairs exceed 3% wall and Router2 with exact identity; both B2 pairs exceed the 3% tier-2 wall floor and have equal-or-better Fmax, unchanged utilization, zero final overuse and normal convergence. Origin accepted-qor remains `40d3b873`, so no lane-1 merge requires re-measurement. Integration merge and annotated tag follow.
 

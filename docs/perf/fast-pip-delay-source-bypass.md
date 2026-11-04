@@ -28,7 +28,7 @@ The reference-only reproduction root `20261104T115910Z-b2-reference-repro` produ
 | Pair | Wall (s), reference -> candidate | Wall delta | Router2 (s), reference -> candidate | Router2 delta | Peak RSS delta | Final Fmax (MHz), reference -> candidate | Iterations | FASM |
 |---|---|---:|---|---:|---:|---|---:|---|
 | r1 | 2272.83 -> 2188.52 | -3.7095% | 1287.45 -> 1206.45 | -6.2915% | +0.7846% | 30.582908630371094 -> 30.67860984802246 | 17 -> 16 | different |
-| r2 | 2234.09 -> 2133.10 | -4.5204% | 1253.49 -> 1160.15 | -7.4464% | +0.4501% | 30.538082122802734 -> 30.538082122802734 | 16 -> 16 | identical |
+| r2 | 2234.09 -> 2133.10 | -4.5204% | 1253.49 -> 1160.15 | -7.4464% | +0.4501% | 30.67860984802246 -> 30.67860984802246 | 16 -> 16 | identical |
 
 The r1 reference reproduced the stored reference exactly. Its candidate FASM difference, using GNU `diff -U0`, is 22,114 all / 22,113 payload hunks, 15,537 non-comment additions, 15,351 non-comment deletions, and 70,203 changed non-comment lines (6,690,135 diff bytes). The r2 complete FASM and report are byte-identical between the pair, although that reference does not reproduce the stored reference.
 
