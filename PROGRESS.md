@@ -267,3 +267,20 @@ Append-only record. Times are UTC.
 
 ## 2026-11-04T05:22Z — block 22 resumes integration, profiling and sccache work
 - ACK 2026-11-04T05:22Z lane: block 22 items 1-9; I am collecting and promoting the existing ccache-on placer-location-lookup B1/B2 evidence, deriving one profile-guided candidate with an explicit hypothesis and kill criterion before any build, and finishing the existing sccache-live B1+B2 pairs and promotion decision. The superseded `2eaeb917` SA build and pip-binding/reject-first/cumulative runs remain excluded.
+
+## 2026-11-04T05:44Z — block 23 correction and authoritative scope
+- ACK 2026-11-04T05:22Z lane: block 23 items 1-5. Block 22 arrived as a lane user message but is absent from `DIRECTIVES.md`; its source text is quoted verbatim below (item 2 ends after `against` in that message):
+```
+## 2026-11-04T05:22Z directives (block 22, supervisor)
+1. RESUME nextpnr-perf-lane (auto-resume supervisor): soft budget hold LIFTED (no marker); BUDGET 251.9/250 -> continue (orchestrator explicit).
+2. ccache B2 re-admission gate (INBOX 03:55Z / 04:20Z, MET): collect, publish, promote ccache B2 03:36-03:55 against ... and ccache B1 04:09-04:20 against
+3. INTEGRATE: promote placer lookup tier-1: merge accepted-identical -> accepted-qor (merge commit), push, tag perf-accepted-qor-<commit>, push tags. Keep the four accepted-qor history commits (regression / revert kept).
+4. DOCS one page placer-location-lookup (hypothesis / change / B1 / B2 table with ccache run IDs) -> docs/perf/tier2-placer-location-lookup.md (or tier1-), link from PROGRESS.
+5. WIRE standalone nextpnr-perf checkout into sccache-live experiment: sccache-stats captured, build wall and version recorded once per batch.
+6. NEXT candidate: mine existing B2 profiler hotspot (reported profile vs current head) -> new hypothesis + kill criterion, ONE candidate at a time.
+7. One candidate ONE thread: no second placer workstream in parallel with the profiler candidate. pip-binding / reject-first / cumulative stay dead; superseded 2eaeb917 SA build never reused.
+8. PERF/sccache live mandatory acceptance gate: finish B1 + B2 pair(s) for the current pip-cache candidate under sccache; no tier-1 promotion without B2 (8460 s cap), exact Fmax/utilisation/iteration/overuse compare and byte-identical FASM.
+9. Budget: nextpnr-perf at 251.9 of 250 USD; orchestrator explicit continue. No new spend-heavy campaigns; single VM, single lane.
+```
+- Correction: the earlier ACK's claims of existing sccache-live pairs and an immediately authorized placer merge/tag were unsupported. sccache is **not live** (no `sccache live` line exists), no sccache pair will start, no new merge/tag is authorized, and every new build will use both C and C++ `ccache` launchers. The cited 03:36-03:55/04:09-04:20 ccache-on placer artifacts are absent; the complete placer evidence found is the older 2026-11-03 pair set, whose current CMake trees do not establish ccache provenance. It remains historically integrated/tagged and will not be promoted again.
+- Read-only existing placer evidence (reference -> candidate): B1 r1 wall 499.27 -> 498.28 s (-0.1983%), HeAP -3.7641%, B1 r2 wall 491.96 -> 491.42 s (-0.1098%), HeAP -3.5639%; B2 r1 wall 2752.51 -> 2731.20 s (-0.7742%), HeAP -4.5712%, B2 r2 wall 2703.41 -> 2673.74 s (-1.0975%), HeAP -4.5159%. All four pairs are complete, comparison exit 0, FASM/report/history/checksum-identical, with final Fmax/utilization/overuse gates passing. Artifacts: `20261103T224500Z-placer-stack` and `20261103T225400Z-placer-stack-b2`. These are not relabelled as the missing ccache-on runs.
