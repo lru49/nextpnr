@@ -106,3 +106,22 @@ ACK 2026-11-04T13:04Z lane2: block 5
 ## 2026-11-04T13:31:12Z — fast pip-delay source bypass integration
 
 - Fetched and rebased on `origin/perf/accepted-qor`; the base remains `40d3b873a9bbea1e0fbc399df5ee3c4eae3cbd39`, so no lane-1 merge invalidates the measurements. Integrating with a no-ff merge and annotated tag `perf-20261104-tier2-fast-pip-delay-source-bypass`; parent tag `perf-accepted-qor-revert-02411403`. No accepted-identical merge because the candidate is tier 2.
+
+
+## 2026-11-04T13:50:50Z — bel-location flat candidate built; B1 starting
+
+- Source `0fa7cf41` changes only `himbaechel/arch.cc` and `himbaechel/arch.h`: precompute immutable `Loc` values in BelId tile/index order at chipdb load; `getBelLocation` becomes flat offset + index lookup. No placement or routing decisions change. The baseline profile inlines this helper, so the rationale is its integer division and chipdb pointer chasing across many placement callers, not a standalone profile symbol.
+- Fresh accepted reference at `5d36ce50`: Release/IPO build on cores 28-39, 121.63 s, peak RSS 2,677,724 KiB, SHA-256 `881d8b4f66bba9375067c814b3eb223b888ed2bcc4bee3c16786560e100d36b7`; full xc7z020 chipdb integrity test finished normally. Candidate: 127.88 s, peak RSS 2,678,080 KiB, SHA-256 `529a80b938e125076fd1a147e4725e00ea2b42018b840f44e40b9ed617819265`; the same integrity test finished normally with exit 0.
+- B1 `top_bringup` pair `20261104T135028Z-bel-location-flat-b1`: candidate core 18, reference core 19, seed 1, one thread, 1920 s cap. Expected tier 1: exact FASM/report/QoR identity plus wall and Router2 improvements of at least 3%. The fresh reference will also be compared with the prior accepted B1 reference artifacts before interpreting candidate metrics.
+
+
+## 2026-11-04T13:59:00Z — bel-location B1 r1 neutral; independent r2 starting
+
+- B1 r1 `20261104T135028Z-bel-location-flat-b1`: both exits 1 with normal timing-only completion; FASM `4b93c41fced2d036511549b077c51c23cde1f29a5309b38f138010682bd2fb61`, report `48c54a90b33497a37ebe2a5e44d912c8e89b3552d840d5f0f9c3d9bed8fec2f0`, router history and checksums are candidate/reference identical; final iteration 91/91. Wall 360.88 -> 360.88 s (0.0000%), Router2 256.44 -> 256.35 s (-0.0351%), RSS +0.2441%: below both 3% gates, no verdict until r2.
+- The fresh current-base reference report matches the prior accepted reference, but its FASM differs from that older-base artifact; this is a cross-base observation, not a candidate/reference mismatch. B1 r2 `20261104T135900Z-bel-location-flat-b1-r2` on candidate core 26 / reference core 27 will test current-base reference reproducibility as well as the candidate kill gate.
+
+
+## 2026-11-04T14:06:48Z — ABANDON bel-location flat at the B1 kill gate
+
+- B1 r2 `20261104T135900Z-bel-location-flat-b1-r2`: current-base reference reproduction against r1 PASS (FASM, report, checksums and final iteration equal across cores 19/27); both candidate/reference exits 1 with normal timing-only completion. Candidate/reference FASM, report, router history and checksums are identical; final iteration 91/91.
+- B1 r2: wall 385.24 -> 388.11 s (+0.7450%), Router2 274.73 -> 276.84 s (+0.7680%), peak RSS +0.2777%. Together with r1 wall 0.0000% / Router2 -0.0351%, two independent-core pairs fail the required 3% wall and Router2 improvements. ABANDON `perf/l2-bel-location-flat`; no accepted-qor merge and no B2 run. Source branch and result roots remain as evidence.
