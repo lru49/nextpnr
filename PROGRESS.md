@@ -34,3 +34,9 @@ ACK 2026-11-04T11:04Z lane2: block 2
 - Hypothesis: removing that dead source lookup and arithmetic reduces Router2 and whole wall time without changing any delay value, route decision, RNG or output.
 - Kill criterion: one B1 pair on candidate core 18/reference core 19, seed 1, one thread, 100 MHz, 1920 s cap. Require reference reproduction before candidate metrics, expected timing-only completion, byte-identical complete FASM, identical report/history/checksums/Fmax/utilization/final overuse, and at least 3.0% improvement in BOTH Router2 and whole wall. Any failure abandons with no B2 or rerun. Build with both C/C++ ccache launchers on cores 28-39 only.
 - Queue after this candidate: `perf/l2-bel-location-flat` (placement, tier 1) and `perf/l2-portref-iteration` (placement/traversal, tier 1); neither will be substituted for the current Router2-focused screen without a new profile rationale.
+
+## 2026-11-04T11:37:11Z — fast pip-delay source bypass built and smoke-tested
+
+- Candidate commit `cbfc8d7a`; build `build/perf-l2-fast-pip-delay-source-bypass`: 63/63, 120.38 s, peak RSS 2,677,820 kB, ccache launchers for C and C++.
+- Candidate SHA-256 `47fc3bfbc2eab4f347f5d6e299000d84fd31eb376f58c268a13142a52b169776`; reference SHA-256 `c33194144895cd1a95098fe9ddfdfbb2c43a1c552e7c07e9b0ead979082fcdc3`.
+- Generated version remains `perf-accepted-qor-revert-40d3b873`; reference-chipdb `--test` passed on build core 28.
