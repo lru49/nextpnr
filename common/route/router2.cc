@@ -519,7 +519,7 @@ struct Router2
         ad.pre_routed = false;
     }
 
-    float score_wire_for_arc(NetInfo *net, const NetData &nd, store_index<PortRef> user, size_t phys_pin, WireId wire,
+    float score_wire_for_arc(NetInfo *net, const PerNetData &nd, store_index<PortRef> user, size_t phys_pin, WireId wire,
                              PipId pip, const PerWireData &wd, float base_cost, float crit_weight)
     {
         int overuse = wd.curr_cong;
