@@ -235,3 +235,4 @@ Append-only record. Times are UTC.
 
 ## 2026-11-04T01:59Z — directive acknowledgement
 - ACK 2026-11-04T01:40Z lane: the named stage-d QoR pid 245492 is no longer present; locating its malformed cutoff artifacts to record the run abandoned without a longer rerun, then regenerating a safe reproducible record and rerunning validated QoR on the freshly integrated build.
+- ACK 2026-11-04T01:53Z lane: block 18 items 1-5 and the two 01:14Z ccache INBOX lines; item 5 remains unexercised. The newest directive supersedes the older QoR-recovery plan before any new pair started: I am naming one B2-profile-guided candidate and will screen only that candidate with one B1 pair, using ccache and keeping sccache off.
