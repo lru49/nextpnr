@@ -67,3 +67,7 @@ ACK 2026-11-04T12:04Z lane2: block 4
 - **B2 tier-2 (reference nondeterministic)** reference-only root `20261104T115910Z-b2-reference-repro`: both runs completed normally with exit 0. r1 FASM `18d00b1ccde28e327fd7fc41024487dc501e4d36a4f509a7dbb178f5e99e5b4a`; r2 FASM `65d9ca5e7b08292ec7248a99be6e8c352330875a1f6b78d942924822b5ffb216` (DIFFER). Reports match each other at `62fd9c1b31399315491fd7ee694c51f868d108f95001d29eb659204a78fe9058`, but neither FASM/report matches the stored reference `403d98cb...` / `ca496ca3...`; the reference is not twice-reproduced.
 - **B2 tier-2 (reference nondeterministic)** pair 1 `20261104T124335Z-fast-pip-delay-source-bypass-b2-r1-tier2` launched: candidate driver 569352/core 26, reference driver 569351/core 27, 8460 s cap.
 - **B2 tier-2 (reference nondeterministic)** pair 2 `20261104T124445Z-fast-pip-delay-source-bypass-b2-r2-tier2` launched after the reference-only runs finished: candidate driver 571545/core 18, reference driver 571544/core 19, 8460 s cap.
+
+## 2026-11-04T13:13:34Z â B2 tier-2 pairs at 30 minutes
+
+- **B2 tier-2 (reference nondeterministic)** pair 1 remains live: nextpnr PIDs 569359 (candidate core 26) and 569358 (reference core 27), elapsed 29m41s. Pair 2 remains live: PIDs 571552 (candidate core 18) and 571551 (reference core 19), elapsed 28m31s. No exit files yet; no candidate metrics inspected; both remain well below the 141-minute kill threshold.
