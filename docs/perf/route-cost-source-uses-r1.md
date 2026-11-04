@@ -2,7 +2,7 @@
 
 ## Status
 
-**NAMED BEFORE BUILD on 2026-11-04.** Candidate `perf/route-cost-source-uses-r1` is based directly on `40d3b873a9bbea1e0fbc399df5ee3c4eae3cbd39`; source commit and binary hash are pending. No B2 run is permitted while the B2 reference remains nondeterministic.
+**ABANDONED on 2026-11-04 at the B1 timing gate.** Candidate `perf/route-cost-source-uses-r1` at `7678ff06064760716378b9e52e59b56bdd0dce3d` is based directly on `40d3b873a9bbea1e0fbc399df5ee3c4eae3cbd39`. Candidate binary SHA-256 is `aeb44efc89c1d95236361305b6991cb283ce82c43a6752b103b104d21d79c66b`. Identity/QoR passed, but both timing gains were below 3.0%. No B2, rerun, merge or tag is permitted.
 
 ## Hypothesis and scope
 
@@ -12,7 +12,11 @@ Change only `common/route/router2.cc`. Compute the existing source-use result on
 
 ## Kill criterion and acceptance gates
 
-Build once in Release/IPO mode with both C and C++ compiler launchers set to `ccache`, pinned to cores 40-63, using version string `perf-accepted-qor-revert-40d3b873`. Per block 35, after the build start one detached B1 pair on candidate core 2 and the verified reference on core 3, seed 1, one thread, 100 MHz and a 1920 s cap while the visit-data pair occupies cores 6/7.
+Build once in Release/IPO mode with both C and C++ compiler launchers set to `ccache`, pinned to cores 40-63, using version string `perf-accepted-qor-revert-40d3b873`. Per block 35, after the build start one detached B1 pair on candidate core 2 and the verified reference on core 3, seed 1, one thread, 100 MHz and a 1920 s cap.
+
+The Release/IPO xc7z020-only build completed successfully on cores 40-63 with both compiler launchers set to `ccache`. Generated `common/version.h` and `--version` both report the reference version string; the source worktree and `git diff --check` are clean. The candidate branch is pushed.
+
+Pair `20261104T114700Z-route-cost-source-uses-r1-b1` started at 11:52:05Z after all input, chipdb and binary hash guards passed. Detached driver 8634 is parented to PID 1; candidate nextpnr 8661 has affinity core 2 and reference nextpnr 8658 has affinity core 3. Actual launch concurrency is 1 pair = 2 processes because the visit-data pair had already completed. Reference reproduction is scripted before candidate comparison/metrics.
 
 Before candidate metrics are read, the reference must reproduce:
 
@@ -22,3 +26,9 @@ Before candidate metrics are read, the reference must reproduce:
 - history `91/284240/0/0/0` and Fmax 41.83 MHz.
 
 Require normal completion with the expected timing-only exit 1, byte-identical complete FASM, identical report bytes and parsed report, router history, checksums, Fmax, utilization and final overuse, plus at least 3.0% paired improvement in both Router2 and whole-wall time. Any identity, QoR or timing failure abandons the candidate with no B2 or rerun. A passing screen requires further confirmation before acceptance.
+
+## B1 result
+
+Both sides completed normally with expected timing-only exits 1/1. The reference reproduced every stored identity value before candidate metrics were read. Candidate complete FASM and report SHA-256 matched the stored values; report bytes/parsed report, full router history, checksums, iteration 91, final overuse zero and Fmax 41.83 MHz all matched. Comparison exit was 0.
+
+Reference -> candidate whole wall was 403.60 -> 401.73 s (**-0.4633%**), and Router2 was 291.18 -> 289.20 s (**-0.6800%**). Both improvements are below the required 3.0%. **Decision: ABANDONED on timing; no B2, rerun, merge or accepted tag.** Raw artifacts remain in `bench/results/20261104T114700Z-route-cost-source-uses-r1-b1`.
