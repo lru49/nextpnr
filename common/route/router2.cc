@@ -1140,12 +1140,12 @@ struct Router2
             } else {
                 int cursor_bwd = midpoint_wire;
                 while (was_visited_fwd(cursor_bwd, std::numeric_limits<float>::max())) {
-                    PipId pip = flat_wires.at(cursor_bwd).pip_fwd;
+                    auto &wd = flat_wires.at(cursor_bwd);
+                    PipId pip = wd.pip_fwd;
                     if (pip == PipId() && cursor_bwd != src_wire_idx)
                         break;
                     bind_pip_internal(nd, i, cursor_bwd, pip);
                     if (ctx->debug && !is_mt) {
-                        auto &wd = flat_wires.at(cursor_bwd);
                         ROUTE_LOG_DBG("      fwd wire: %s (curr %d hist %f share %d)\n", ctx->nameOfWire(wd.w),
                                       wd.curr_cong - 1, wd.hist_cong_cost, nd.wires.at(wd.w).second);
                     }
@@ -1166,13 +1166,13 @@ struct Router2
 
                 while (cursor_bwd != src_wire_idx) {
                     // Tack onto existing routing
-                    WireId bwd_w = flat_wires.at(cursor_bwd).w;
+                    auto &wd = flat_wires.at(cursor_bwd);
+                    WireId bwd_w = wd.w;
                     if (!nd.wires.count(bwd_w))
                         break;
                     auto &bound = nd.wires.at(bwd_w);
                     PipId pip = bound.first;
                     if (ctx->debug && !is_mt) {
-                        auto &wd = flat_wires.at(cursor_bwd);
                         ROUTE_LOG_DBG("      ext wire: %s (curr %d hist %f share %d)\n", ctx->nameOfWire(wd.w),
                                       wd.curr_cong - 1, wd.hist_cong_cost, bound.second);
                     }
