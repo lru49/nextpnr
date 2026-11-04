@@ -808,12 +808,13 @@ struct Router2
     void reset_wires(ThreadContext &t)
     {
         for (auto w : t.dirty_wires) {
-            flat_wires[w].pip_fwd = PipId();
-            flat_wires[w].pip_bwd = PipId();
-            flat_wires[w].visited_fwd = false;
-            flat_wires[w].visited_bwd = false;
-            flat_wires[w].cost_fwd = 0.0;
-            flat_wires[w].cost_bwd = 0.0;
+            auto &wd = flat_wires[w];
+            wd.pip_fwd = PipId();
+            wd.pip_bwd = PipId();
+            wd.visited_fwd = false;
+            wd.visited_bwd = false;
+            wd.cost_fwd = 0.0;
+            wd.cost_bwd = 0.0;
         }
         t.dirty_wires.clear();
     }
