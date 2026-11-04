@@ -289,21 +289,30 @@ template <RelSlice<int32_t> TileWireDataPOD::*ptr> struct UpdownhillPipIterator
     const ChipInfoPOD *chip;
     TileWireIterator twi, twi_end;
     int cursor = -1;
+    WireId wire;
+    const TileWireDataPOD *wire_data = nullptr;
 
     UpdownhillPipIterator(const ChipInfoPOD *chip, TileWireIterator twi, TileWireIterator twi_end, int cursor)
-            : chip(chip), twi(twi), twi_end(twi_end), cursor(cursor) {};
+            : chip(chip), twi(twi), twi_end(twi_end), cursor(cursor)
+    {
+        if (this->twi != this->twi_end) {
+            wire = *this->twi;
+            wire_data = &chip_wire_info(chip, wire);
+        }
+    };
 
     void operator++()
     {
         cursor++;
-        while (true) {
-            if (!(twi != twi_end))
-                break;
-            WireId w = *twi;
-            if (cursor < (chip_wire_info(chip, w).*ptr).ssize())
+        while (twi != twi_end) {
+            if (cursor < (wire_data->*ptr).ssize())
                 break;
             ++twi;
             cursor = 0;
+            if (twi != twi_end) {
+                wire = *twi;
+                wire_data = &chip_wire_info(chip, wire);
+            }
         }
     }
     bool operator!=(const UpdownhillPipIterator<ptr> &other) const
@@ -314,9 +323,8 @@ template <RelSlice<int32_t> TileWireDataPOD::*ptr> struct UpdownhillPipIterator
     PipId operator*() const
     {
         PipId ret;
-        WireId w = *twi;
-        ret.tile = w.tile;
-        ret.index = (chip_wire_info(chip, w).*ptr)[cursor];
+        ret.tile = wire.tile;
+        ret.index = (wire_data->*ptr)[cursor];
         return ret;
     }
 };
