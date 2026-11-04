@@ -1,6 +1,6 @@
 # Tier-2 candidate evidence
 
-This record uses the existing paired artifacts only; no benchmark was rerun. Values are **reference -> candidate**. Tier 2 requires equal or better QoR on every valid benchmark, final overuse 0, router convergence, and a recorded FASM difference. Tier 1 is not claimed for either candidate.
+This record uses the existing paired artifacts only; no benchmark was rerun. Values are **reference -> candidate**. Tier 2 requires equal or better QoR on every valid benchmark, final overuse 0, router convergence, and a recorded FASM difference. Tier 1 is not claimed for any candidate with a differing-FASM row in this record.
 
 `1T` is the documented B1 timing-only exit 1: both sides fail the 100 MHz constraint with identical Fmax. It is not timing closure. The final route triple is `overused / overuse / archfail`. Utilization is reported as the number of equal report fields out of 52.
 
@@ -57,6 +57,28 @@ The first-wave B2 r2/r3 directories are excluded: both exits were 143, with no r
 Evidence root: `/home/gremen/.cache/nextpnr-perf-lane/bench/results/20261103T203700Z-router-reject-first/`; pairs are `b1-router-reject-first-r1`, `b1-router-reject-first-r2` and `b2-router-reject-first-r1`.
 
 R3 report bytes, parsed report, history and checksums differ; report differences are Fmax and critical paths. The abandoned cumulative `ed9af634` result is separate and is not evidence for this candidate.
+
+## Router pip-location reuse
+
+- Candidate: `02411403c8b8ab8ecba0279802a20b6121fe0581`
+- Reference/parent: router-stack `9a83eaa0ef4b4fe52ce8395a167f92318d7fc2c3`
+- Result: **tier-2 QoR gate passes**. Both B1 pairs and B2 r1 are byte-identical; B2 r2 has identical report bytes and utilization but different FASM, history and checksums. Tier 1 is not accepted for the whole candidate.
+
+| Pair | Design | Exit | Final Fmax (MHz) | Utilization | Final route triple | Converged | Iterations |
+|---|---|---|---|---|---|---|---|
+| L1 | B1 r1 | 1T -> 1T | 41.830501556396484 -> 41.830501556396484 | 52/52 equal | 0/0/0 -> 0/0/0 | yes -> yes | 91 -> 91 |
+| L2 | B1 r2 | 1T -> 1T | 41.830501556396484 -> 41.830501556396484 | 52/52 equal | 0/0/0 -> 0/0/0 | yes -> yes | 91 -> 91 |
+| L3 | B2 r1 | 0 -> 0 | 30.538082122802734 -> 30.538082122802734 | 52/52 equal | 0/0/0 -> 0/0/0 | yes -> yes | 16 -> 16 |
+| L4 | B2 r2 | 0 -> 0 | 30.538082122802734 -> 30.538082122802734 | 52/52 equal | 0/0/0 -> 0/0/0 | yes -> yes | 18 -> 16 |
+
+| Pair | FASM status | All / payload hunks | Non-comment added | Non-comment deleted | Non-comment changed |
+|---|---|---:|---:|---:|---:|
+| L1 | identical | 0 / 0 | 0 | 0 | 0 |
+| L2 | identical | 0 / 0 | 0 | 0 | 0 |
+| L3 | identical | 0 / 0 | 0 | 0 | 0 |
+| L4 | different | 3,155 / 3,154 | 2,288 | 2,326 | 9,852 |
+
+Evidence roots: `/home/gremen/.cache/nextpnr-perf-lane/bench/results/20261104T001600Z-pip-location-reuse-b1/` (L1-L2) and `/home/gremen/.cache/nextpnr-perf-lane/bench/results/20261104T004300Z-pip-location-reuse-b2/` (L3-L4). L4 preserves report bytes, parsed report, Fmax, utilization and final overuse; only its routing outcome differs.
 
 ## FASM counting convention
 

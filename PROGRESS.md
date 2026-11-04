@@ -223,3 +223,7 @@ Append-only record. Times are UTC.
 
 ## 2026-11-04T01:35Z — required tags and tier-2 record published
 - Added canonical `docs/perf/tier2-qor.md` in `a4240057` (same content as retained root `TIER2.md`) and pushed it. Created and pushed annotated `perf-20261103-tier1-router-stack` at `9a83eaa0` and `perf-20261104-tier1-placer-location-lookup` at `b2dc264c`, with B1/B2 numbers. Remote verification now lists those two plus `perf-accepted-identical-9a83eaa0`, `perf-accepted-identical-b2dc264c`, `perf-accepted-qor-9299e4be`, `perf-accepted-qor-05231767`, and `perf-baseline-d56c470f`; no tag was deleted.
+
+## 2026-11-04T01:40Z — pip-location-reuse accepted for tier 2
+- Decision: ACCEPT `02411403c8b8ab8ecba0279802a20b6121fe0581` for `perf/accepted-qor`, not `perf/accepted-identical`. Both B1 pairs and B2 r1 preserve complete FASM/report/history/checksums; B2 r2 preserves report bytes, parsed report, Fmax, all 52 utilization fields, convergence and final overuse 0 while reducing wall and Router2. All four B2 logs contain `Routing complete.` and `Program finished normally.`
+- B2 r2 FASM diff, reference -> candidate with the established non-comment convention: 3,155 total / 3,154 payload hunks; 2,288 added, 2,326 deleted and 9,852 changed lines. B1 r1/r2 and B2 r1 have zero diff. This differing-FASM row is why the whole candidate is tier 2 only. The QoR/FASM table is now in both `TIER2.md` and `docs/perf/tier2-qor.md`.
