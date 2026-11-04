@@ -1250,6 +1250,14 @@ struct Router2
         t.wire_by_loc.clear();
         t.in_wire_by_loc.clear();
         auto &nd = nets.at(net->udata);
+        // A previous serial fallback may have routed outside this worker's bbox.
+        // Reroute such nets serially before touching shared visit/congestion state.
+        if (is_mt) {
+            for (const auto &wire : nd.wires) {
+                if (!thread_test_wire(t, flat_wires.at(wire_index(wire.first))))
+                    return false;
+            }
+        }
         bool failed_slack = false;
         for (auto usr : net->users.enumerate())
             failed_slack |= arc_failed_slack(net, usr.index);
