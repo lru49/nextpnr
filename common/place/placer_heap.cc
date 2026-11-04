@@ -440,6 +440,7 @@ class HeAPPlacer
         int x, y;
         int legal_x, legal_y;
         double rawx, rawy;
+        Loc cluster_offset;
         bool locked, global;
     };
     dict<IdString, CellLocation> cell_locs;
@@ -895,8 +896,10 @@ class HeAPPlacer
         }
         // Finally, update the udata of children
         for (auto &cluster : cluster2cells)
-            for (auto child : cluster.second)
+            for (auto child : cluster.second) {
                 child->udata = ctx->getClusterRootCell(cluster.first)->udata;
+                cell_locs.at(child->name).cluster_offset = ctx->getClusterOffset(child);
+            }
         return row;
     }
 
@@ -967,14 +970,15 @@ class HeAPPlacer
                 if (eqn.cell->udata == dont_solve)
                     return;
                 int row = eqn.cell->udata;
-                int v_pos = cell_pos(var.cell);
+                const auto &var_loc = cell_locs.at(var.cell->name);
+                int v_pos = yaxis ? var_loc.y : var_loc.x;
                 if (var.cell->udata != dont_solve) {
                     es.add_coeff(row, var.cell->udata, weight);
                 } else {
                     es.add_rhs(row, -v_pos * weight);
                 }
                 if (var.cell->cluster != ClusterId()) {
-                    Loc offset = ctx->getClusterOffset(var.cell);
+                    const Loc &offset = var_loc.cluster_offset;
                     es.add_rhs(row, -(yaxis ? offset.y : offset.x) * weight);
                 }
             };
