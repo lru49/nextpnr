@@ -137,3 +137,22 @@ ACK 2026-11-04T13:04Z lane2: block 5
 
 ACK 2026-11-04T13:36Z lane2: block 6
 ACK 2026-11-04T14:05Z lane2: block 7
+
+
+## 2026-11-04T14:24:31Z — PortRef direct active-slot iteration built
+
+- Source `4b9f43e7` changes only `common/kernel/indexed_store.h` and `common/place/placer_heap.cc`: a direct ascending-active-slot `for_each` replaces the HeAP enumerated iterator wrappers and repeated bounds-checked accesses. Driver-first order, user indices and equation arithmetic are unchanged.
+- xc7z020-only Release/IPO build on cores 28-39 with both ccache launchers passed in 128.16 s, peak RSS 2,678,000 KiB. Candidate binary SHA-256 `9bea41f8abe23890ac36d3ff718c3aea5679f341bdd323b7eda5b843c2c77715`; full chipdb `--test` exited 0.
+- Reference remains the already validated accepted `5d36ce50` binary SHA-256 `881d8b4f66bba9375067c814b3eb223b888ed2bcc4bee3c16786560e100d36b7`. B1 will use candidate core 22/reference core 23; reference reproduction and identity are mandatory before timing interpretation.
+
+
+## 2026-11-04T14:44:15Z — ABANDON PortRef iteration; full-model harness landed
+
+- The 14:25:29Z launcher attempt `20261104T142529Z-portref-iteration-b1` was invalid: shell backgrounding ran only a candidate and no reference. It is retained as a discarded candidate-only artifact and no metrics were taken from it.
+- Valid B1 `20261104T143323Z-portref-iteration-b1`, candidate core 22/reference core 23: reference reproduction against `20261104T135900Z-bel-location-flat-b1-r2` PASS for normal exit/finish, FASM, report, checksums, complete history and final iteration. Both runs exited 1 normally with final iteration 91.
+- Candidate/reference report bytes, parsed report, history, checksums, final iteration and Fmax are equal. Raw FASM differs only in the generated version comment; the complete payload after that line is byte-identical with SHA-256 `45c231cca7f541233e2a98f318860ac62cfb31683ae9e0ec64b769a196f0db0f`. The raw full-byte identity gate is therefore not clean because the candidate was configured after its source commit, but this metadata issue cannot rescue the timing result.
+- Wall 393.24 -> 393.25 s (+0.0025%), Router2 281.18 -> 281.42 s (+0.0854%), HeAP 45.80 -> 45.66 s (-0.3057%), analytic iterations 42.97 -> 42.89 s (-0.1862%). BOTH timing gates FAIL regardless of the version-comment artifact. ABANDON `perf/l2-portref-iteration`; no rerun, B2, merge, tag or bitstreams. No lane-2 benchmark process remains.
+- Block 8 item 2 recorded: all run artifacts remain under `bench/results/<run id>`; any future candidate accepted after its tag requires B1+B2 bitstreams, checksums and metadata on cores 28-39. Accepted `5d36ce50` is exempt because the one-shot lane builds those.
+- Full-model harness `987f57f2` is now on `origin/perf/baseline`. Build reference exactly `40d3b873 + 987f57f2` and candidate exactly `5d36ce50 + 987f57f2`, then run one B2 r1 pair on candidate core 18/reference core 19. Record fast-model and full-model Fmax and append the result to the accepted document; acceptance stands unless full-model Fmax worsens.
+
+ACK 2026-11-04T14:26Z lane2: block 8
