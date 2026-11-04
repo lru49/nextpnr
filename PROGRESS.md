@@ -106,3 +106,34 @@ ACK 2026-11-04T13:04Z lane2: block 5
 ## 2026-11-04T13:31:12Z — fast pip-delay source bypass integration
 
 - Fetched and rebased on `origin/perf/accepted-qor`; the base remains `40d3b873a9bbea1e0fbc399df5ee3c4eae3cbd39`, so no lane-1 merge invalidates the measurements. Integrating with a no-ff merge and annotated tag `perf-20261104-tier2-fast-pip-delay-source-bypass`; parent tag `perf-accepted-qor-revert-02411403`. No accepted-identical merge because the candidate is tier 2.
+
+
+## 2026-11-04T13:50:50Z — bel-location flat candidate built; B1 starting
+
+- Source `0fa7cf41` changes only `himbaechel/arch.cc` and `himbaechel/arch.h`: precompute immutable `Loc` values in BelId tile/index order at chipdb load; `getBelLocation` becomes flat offset + index lookup. No placement or routing decisions change. The baseline profile inlines this helper, so the rationale is its integer division and chipdb pointer chasing across many placement callers, not a standalone profile symbol.
+- Fresh accepted reference at `5d36ce50`: Release/IPO build on cores 28-39, 121.63 s, peak RSS 2,677,724 KiB, SHA-256 `881d8b4f66bba9375067c814b3eb223b888ed2bcc4bee3c16786560e100d36b7`; full xc7z020 chipdb integrity test finished normally. Candidate: 127.88 s, peak RSS 2,678,080 KiB, SHA-256 `529a80b938e125076fd1a147e4725e00ea2b42018b840f44e40b9ed617819265`; the same integrity test finished normally with exit 0.
+- B1 `top_bringup` pair `20261104T135028Z-bel-location-flat-b1`: candidate core 18, reference core 19, seed 1, one thread, 1920 s cap. Expected tier 1: exact FASM/report/QoR identity plus wall and Router2 improvements of at least 3%. The fresh reference will also be compared with the prior accepted B1 reference artifacts before interpreting candidate metrics.
+
+
+## 2026-11-04T13:59:00Z — bel-location B1 r1 neutral; independent r2 starting
+
+- B1 r1 `20261104T135028Z-bel-location-flat-b1`: both exits 1 with normal timing-only completion; FASM `4b93c41fced2d036511549b077c51c23cde1f29a5309b38f138010682bd2fb61`, report `48c54a90b33497a37ebe2a5e44d912c8e89b3552d840d5f0f9c3d9bed8fec2f0`, router history and checksums are candidate/reference identical; final iteration 91/91. Wall 360.88 -> 360.88 s (0.0000%), Router2 256.44 -> 256.35 s (-0.0351%), RSS +0.2441%: below both 3% gates, no verdict until r2.
+- The fresh current-base reference report matches the prior accepted reference, but its FASM differs from that older-base artifact; this is a cross-base observation, not a candidate/reference mismatch. B1 r2 `20261104T135900Z-bel-location-flat-b1-r2` on candidate core 26 / reference core 27 will test current-base reference reproducibility as well as the candidate kill gate.
+
+
+## 2026-11-04T14:06:48Z — ABANDON bel-location flat at the B1 kill gate
+
+- B1 r2 `20261104T135900Z-bel-location-flat-b1-r2`: current-base reference reproduction against r1 PASS (FASM, report, checksums and final iteration equal across cores 19/27); both candidate/reference exits 1 with normal timing-only completion. Candidate/reference FASM, report, router history and checksums are identical; final iteration 91/91.
+- B1 r2: wall 385.24 -> 388.11 s (+0.7450%), Router2 274.73 -> 276.84 s (+0.7680%), peak RSS +0.2777%. Together with r1 wall 0.0000% / Router2 -0.0351%, two independent-core pairs fail the required 3% wall and Router2 improvements. ABANDON `perf/l2-bel-location-flat`; no accepted-qor merge and no B2 run. Source branch and result roots remain as evidence.
+
+
+## 2026-11-04T14:17:06Z — directive ACKs and PortRef iteration claimed
+
+- Bel-location r1/r2 verdicts, reference reproduction, identity gates and wall/Router2 deltas are recorded above. Its B1 pairs actually used cores 18/19 and 26/27 because they were already built and running when block 6 arrived. Accepted integration `5d36ce50` is also recorded above.
+- Block 7 full-model-Fmax harness is not present on `origin/perf/baseline` at `4e6facbf`: no patch commits touching `himbaechel/arch.cc`/`arch.h` were found after accepted `5d36ce50`. Do not write a duplicate; fetch every 30 minutes. Once it lands, rebase/rebuild as directed and run one B2 r1 pair with candidate core 18/reference core 19, then append full-model Fmax to the accepted record. Acceptance stands unless candidate Fmax is worse.
+- Claimed `perf/l2-portref-iteration` at 14:10:58Z (claims commit `df280d47`) for HeAP `foreach_port` direct `indexed_store` active-slot traversal. Base is accepted `5d36ce50`; expected tier 1. Preserve driver-before-users order, ascending active-slot order, user indices, equation arithmetic and all RNG/output behavior.
+- Pending candidate queue: (1) `perf/l2-portref-iteration` — HeAP analytic placement traversal, tier 1; (2) `perf/l2-detail-place-portref-iteration` — detailed-placement PortRef traversal using the same direct active-slot mechanism if justified, tier 1; (3) `perf/l2-heap-cluster-offset-reuse` — HeAP equation construction, reuse immutable cluster-offset lookups without changing arithmetic, tier 1.
+- Kill gates: build/smoke failure, any reference or candidate/reference identity mismatch, or failure to improve both wall and Router2 by at least 3%. No B2 unless B1 passes. Build on cores 28-39 with both ccache launchers; B1 on candidate core 22/reference core 23 with seed 1, one thread, 100 MHz and 1920 s cap.
+
+ACK 2026-11-04T13:36Z lane2: block 6
+ACK 2026-11-04T14:05Z lane2: block 7
