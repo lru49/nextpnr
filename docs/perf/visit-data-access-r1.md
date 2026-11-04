@@ -2,7 +2,7 @@
 
 ## Status
 
-**NAMED BEFORE BUILD on 2026-11-04.** Candidate `perf/visit-data-access-r1` is based directly on `40d3b873a9bbea1e0fbc399df5ee3c4eae3cbd39`; source commit and binary hash are pending. No B2 run is permitted while the B2 reference remains nondeterministic.
+**BUILT on 2026-11-04; B1 pending.** Candidate `perf/visit-data-access-r1` at `dd3000de0ce81caff8cb336ec0927a37c0989f10` is based directly on `40d3b873a9bbea1e0fbc399df5ee3c4eae3cbd39`. Candidate binary SHA-256 is `aadd14e2d7173eda4b0d23319b28ab26befe30c11391c5c2c2a68214a96acb8a`. No B2 run is permitted while the B2 reference remains nondeterministic.
 
 ## Hypothesis and scope
 
@@ -12,7 +12,9 @@ The candidate removes redundant access and bounds-check overhead in Router2's ho
 
 ## Kill criterion and acceptance gates
 
-Build once in Release/IPO mode with both C and C++ compiler launchers set to `ccache`, pinned to cores 40-63, using version string `perf-accepted-qor-revert-40d3b873`. Run one detached B1 pair on candidate core 2 and the verified reference on core 3 (or the block-34 alternative cores 10/11), seed 1, one thread, 100 MHz and a 1920 s cap.
+Build once in Release/IPO mode with both C and C++ compiler launchers set to `ccache`, pinned to cores 40-63, using version string `perf-accepted-qor-revert-40d3b873`. Per block 35, run one detached B1 pair on candidate core 6 and the verified reference on core 7, seed 1, one thread, 100 MHz and a 1920 s cap.
+
+The Release/IPO xc7z020-only build completed 63/63 steps in 214.75 s with peak RSS 2,678,000 KiB. Both compiler launchers and the generated version string were verified.
 
 Before candidate metrics are read, the reference must reproduce:
 
