@@ -232,3 +232,6 @@ Append-only record. Times are UTC.
 - Merged `02411403` into `perf/accepted-qor` as `71096e79449f07d74eb8792a13305a2a6bd41309`. The two `router2.cc` conflicts were resolved by preserving reject-first's early filters and passing the reused `pip_loc` only to the final scoring call. No new benchmark was launched.
 - Reconfigured the existing Release/xc7z020 integration tree with both C and C++ compiler launchers set to local `ccache`. Build before/after: 2026-11-04T01:44:49Z / 01:45:51Z; measured wall 61.40 s, peak RSS 977,260 KiB, 62/62 Ninja steps PASS. `nextpnr-himbaechel --version` reports `perf-accepted-qor-02411403`; `git diff --check` and the worktree are clean.
 - Created the required annotated tag immediately after the merge with B1/B2 measurements, FASM status and parent `perf-accepted-qor-05231767`. Pushed and remote-verified branch `perf/accepted-qor` at `71096e79`; tag `perf-accepted-qor-02411403` object `905b7d0c029ef7ecdaae46249b65c4650ca4ab00` dereferences to the same merge. No tag was deleted.
+
+## 2026-11-04T01:59Z — directive acknowledgement
+- ACK 2026-11-04T01:40Z lane: the named stage-d QoR pid 245492 is no longer present; locating its malformed cutoff artifacts to record the run abandoned without a longer rerun, then regenerating a safe reproducible record and rerunning validated QoR on the freshly integrated build.
