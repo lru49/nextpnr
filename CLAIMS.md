@@ -14,3 +14,4 @@ CLAIM 2026-11-04T12:01:00Z lane1 perf/reset-wires-reference-r1 Router2/reset_wir
 CLAIM 2026-11-04T12:04Z lane1 b2-determinism-root-cause Router2 per-iteration (rip-up order, heap pops, hash iteration)
 ABANDONED 2026-11-04T12:25:00Z lane1 perf/reset-wires-reference-r1 B1 identity PASS; wall -0.8022%, Router2 -0.9540%, both timing gates FAIL
 CLAIM 2026-11-04T12:25:00Z lane1 perf/score-netdata-reference-r1 Router2/route_arc+score_wire_for_arc
+CLAIM 2026-11-04T12:34Z lane1 b2-determinism-root-cause: suspect = threaded Router2 (NPNR_DISABLE_THREADS)
