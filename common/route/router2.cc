@@ -570,10 +570,8 @@ struct Router2
                               base_cost * resource_hist_cost * resource_present_cost / (1 + crit_weight));
     }
 
-    float get_togo_cost(NetInfo *net, store_index<PortRef> user, int wire, WireId src_sink, bool bwd, float crit_weight)
+    float get_togo_cost(const PerNetData &nd, const PerWireData &wd, WireId src_sink, bool bwd, float crit_weight)
     {
-        auto &nd = nets.at(net->udata);
-        auto &wd = flat_wires[wire];
         int source_uses = 0;
         auto fnd_wire = nd.wires.find(wd.w);
         if (fnd_wire != nd.wires.end())
@@ -946,7 +944,7 @@ struct Router2
                 base_score.delay = 0;
                 base_score.cost = 0;
                 int wire_idx = wire_index(wire);
-                base_score.togo_cost = get_togo_cost(net, i, wire_idx, dst_wire, false, crit_weight);
+                base_score.togo_cost = get_togo_cost(nd, flat_wires.at(wire_idx), dst_wire, false, crit_weight);
                 t.fwd_queue.push(QueuedWire(wire_idx, base_score));
                 set_visited_fwd(t, wire_idx, PipId(), 0.0);
             };
@@ -978,7 +976,7 @@ struct Router2
                 base_score.delay = 0;
                 base_score.cost = 0;
                 int wire_idx = wire_index(wire);
-                base_score.togo_cost = get_togo_cost(net, i, wire_idx, src_wire, true, crit_weight);
+                base_score.togo_cost = get_togo_cost(nd, flat_wires.at(wire_idx), src_wire, true, crit_weight);
                 t.bwd_queue.push(QueuedWire(wire_idx, base_score));
                 set_visited_bwd(t, wire_idx, PipId(), 0.0);
             };
@@ -1048,7 +1046,7 @@ struct Router2
                         next_score.cost = curr.score.cost + score_wire_for_arc(net, i, phys_pin, next, dh, nwd,
                                                                                base_cost, crit_weight);
                         next_score.togo_cost =
-                                cfg.estimate_weight * get_togo_cost(net, i, next_idx, dst_wire, false, crit_weight);
+                                cfg.estimate_weight * get_togo_cost(nd, nwd, dst_wire, false, crit_weight);
                         set_visited_fwd(t, next_idx, dh, next_score.delay);
                         t.fwd_queue.push(QueuedWire(next_idx, next_score, t.rng.rng()));
                     }
@@ -1122,7 +1120,7 @@ struct Router2
                                                                                base_cost, crit_weight);
                         next_score.togo_cost = const_mode
                                                        ? 0
-                                                       : cfg.estimate_weight * get_togo_cost(net, i, next_idx, src_wire,
+                                                       : cfg.estimate_weight * get_togo_cost(nd, nwd, src_wire,
                                                                                              true, crit_weight);
                         set_visited_bwd(t, next_idx, uh, next_score.delay);
                         t.bwd_queue.push(QueuedWire(next_idx, next_score, t.rng.rng()));
