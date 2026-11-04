@@ -106,3 +106,10 @@ ACK 2026-11-04T13:04Z lane2: block 5
 ## 2026-11-04T13:31:12Z — fast pip-delay source bypass integration
 
 - Fetched and rebased on `origin/perf/accepted-qor`; the base remains `40d3b873a9bbea1e0fbc399df5ee3c4eae3cbd39`, so no lane-1 merge invalidates the measurements. Integrating with a no-ff merge and annotated tag `perf-20261104-tier2-fast-pip-delay-source-bypass`; parent tag `perf-accepted-qor-revert-02411403`. No accepted-identical merge because the candidate is tier 2.
+
+
+## 2026-11-04T13:50:50Z — bel-location flat candidate built; B1 starting
+
+- Source `0fa7cf41` changes only `himbaechel/arch.cc` and `himbaechel/arch.h`: precompute immutable `Loc` values in BelId tile/index order at chipdb load; `getBelLocation` becomes flat offset + index lookup. No placement or routing decisions change. The baseline profile inlines this helper, so the rationale is its integer division and chipdb pointer chasing across many placement callers, not a standalone profile symbol.
+- Fresh accepted reference at `5d36ce50`: Release/IPO build on cores 28-39, 121.63 s, peak RSS 2,677,724 KiB, SHA-256 `881d8b4f66bba9375067c814b3eb223b888ed2bcc4bee3c16786560e100d36b7`; full xc7z020 chipdb integrity test finished normally. Candidate: 127.88 s, peak RSS 2,678,080 KiB, SHA-256 `529a80b938e125076fd1a147e4725e00ea2b42018b840f44e40b9ed617819265`; the same integrity test finished normally with exit 0.
+- B1 `top_bringup` pair `20261104T135028Z-bel-location-flat-b1`: candidate core 18, reference core 19, seed 1, one thread, 1920 s cap. Expected tier 1: exact FASM/report/QoR identity plus wall and Router2 improvements of at least 3%. The fresh reference will also be compared with the prior accepted B1 reference artifacts before interpreting candidate metrics.
