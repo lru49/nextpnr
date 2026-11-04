@@ -2,7 +2,7 @@
 
 ## Status
 
-**ABANDONED on 2026-11-04.** Both B1 pairs passed, but B2 r1 failed complete-FASM/report/history/checksum identity. B2 r2's reference independently failed reproduction, so no r2 candidate verdict was drawn. The candidate is not accepted, merged or tagged; its measured timing does not override the identity failure.
+**ABANDONED on 2026-11-04.** Both B1 pairs passed, but B2 r1 failed complete-FASM/report/history/checksum identity. B2 r2's reference independently failed reproduction, so no r2 candidate verdict was drawn. B2 r3 was subsequently stopped under block 31 because the valid r1 identity failure had already mandated abandonment; r3 has no verdict. The candidate is not accepted, merged or tagged; its measured timing does not override the identity failure.
 
 ## Base and branch
 
@@ -75,3 +75,11 @@ In r1, the reference reproduced every stored result before candidate metrics wer
 In r2, the reference itself did not reproduce the stored result: FASM SHA-256 was `18d00b1ccde28e327fd7fc41024487dc501e4d36a4f509a7dbb178f5e99e5b4a`, report SHA-256 `62fd9c1b31399315491fd7ee694c51f868d108f95001d29eb659204a78fe9058`, third checksum `0x0ab634fe`, final iteration 15 and Fmax 30.68 MHz. The driver therefore skipped candidate comparison (`compare=100`); no r2 candidate metrics or acceptance claim are used.
 
 One valid reference/candidate comparison is sufficient to reject this candidate on identity. `perf/pip-delay-flat-r2` is abandoned with no merge, tag or further acceptance run.
+
+## B2 r3: stopped, no verdict
+
+Block 29 item 3 incorrectly ordered a replacement after the valid r1 identity failure had already required abandonment. Block 31 superseded that launch and the r3 processes were stopped by pid at approximately 2026-11-04T10:00Z. Driver 52637, candidate 52662, reference 52659 and wrappers 52657/52660 were terminated; the driver log records candidate/reference exits 143 at 10:00:15Z after about 29 minutes on cores 2/3.
+
+No reference-reproduction, comparison or completed timing artifact exists for r3. Its reference reproduction, identity checks and performance are therefore unavailable, and it supplies no candidate verdict. The candidate remains abandoned with no merge or tag.
+
+The r2 reference-side nondeterminism remains a standing finding: no further pair that depends on the implicated B2 reference may start until that reference reproduces twice in separate pairs.
