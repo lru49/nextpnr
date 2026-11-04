@@ -2,7 +2,7 @@
 
 ## Status
 
-**TWO DIAGNOSTIC RUNS LIVE; identity result pending.** Both runs are **B2 diagnostic (threads disabled, determinism test): not a candidate, no speed claim**. This experiment does not satisfy or remove the standing reference-reproduction gate by itself. Every candidate B2 result remains **B2 tier-2 (reference nondeterministic)** until the verified reference reproduces twice or a superseding directive arrives.
+**COMPLETE; INCONCLUSIVE because both runs failed before Router2 iteration 1.** Both runs were **B2 diagnostic (threads disabled, determinism test): not a candidate, no speed claim**. This experiment does not satisfy or remove the standing reference-reproduction gate. Every candidate B2 result remains **B2 tier-2 (reference nondeterministic)** until the verified reference reproduces twice or a superseding directive arrives.
 
 ## Hypothesis and build
 
@@ -17,3 +17,15 @@ The original reference binary was not overwritten and remains SHA-256 `c33194144
 Exactly two detached repeats started at `2026-11-04T12:44:47Z` under driver 23362 (PPID 1) in `bench/results/20261104T124100Z-b2-no-threads-diagnostic`. Both use input SHA-256 `9271cdc99c199854e89a21615481fd541171e9b742c257140e57a46e6323c7f1`, chipdb `e8038aa75f1162efa21c4bd6898fb03e8bfb3091164b56e9356e962a8d4cad2b`, seed 1, one thread, 100 MHz and an 8460 s cap. r1 nextpnr 23411 has affinity 12-13; r2 nextpnr 23410 has affinity 14-15. The score-netdata B1 pair also runs on cores 2/3, so actual launch concurrency is four nextpnr processes.
 
 Compare complete FASM and report bytes after both runs finish. If both outputs are byte-identical, record the threading evidence and propose the smallest deterministic Router2 fix that retains worker threads. If they differ, record the first differing iteration and FASM evidence, then investigate rip-up order and hash iteration. No runtime measurement from this diagnostic is a performance result.
+
+## Result
+
+Both runs finished at `2026-11-04T13:01:04Z` with exit **125** after 976.14/976.59 s wall. Neither routed normally, produced FASM/report output, or logged a Router2 iteration. Both stopped at the same error:
+
+```text
+ERROR: Failed to route arc 0.0 of net 'hp_rdata[28]', from X32Y51/PS7_X0Y0.SAXIHP0RDATA28 to X54Y21/SLICE_X1Y0.D5.
+```
+
+Both runs produced the same packing and post-placement checksums, `0xc55c66c4` and `0x6deffc74`; the latter matches the original threaded reference. Thus the diagnostic reached Router2 with the same observable placement state, but its common serial-routing failure prevents any conclusion about final-output determinism. `comparison.json` reports `fasm_byte_identical=false` and `report_byte_identical=false` only because both files are absent; these are **not observed output differences**. There is no first differing iteration or FASM line to report.
+
+The directed two repeats were not rerun. Root-cause investigation continues with the threaded existing-route/rip-up partition invariant and, if needed, hash iteration. No runtime from these failed runs is a speed result.
