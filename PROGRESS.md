@@ -14,3 +14,12 @@
 - No source edit, build, or benchmark has started.
 
 ACK 2026-11-04T10:34Z lane2: block 1
+
+## 2026-11-04T11:12Z — HeAP cell-location index abandoned at the B1 timing gate
+
+- Candidate source `e78f7efc` is pushed as `perf/l2-heap-cell-location-index`, one commit over `40d3b873`. Only `common/place/placer_heap.cc` changed; `git diff --check` passed.
+- Final xc7z020-only Release/IPO build used both C/C++ `ccache` launchers on cores 28-39: 61/61 steps passed in 122.94 s, peak RSS 2,678,080 KiB. Reference-chipdb `--test` passed. Candidate binary SHA-256 `d4f4b18c4604f38fe0b94be2be2f66e21b4e092d44b19713a1ecf2534429cff0`; reference `c33194144895cd1a95098fe9ddfdfbb2c43a1c552e7c07e9b0ead979082fcdc3`.
+- Pair `20261104T110406Z-heap-cell-location-index-b1`: candidate core 18, reference core 19, seed 1, one thread, 100 MHz, 1920 s cap. Before candidate metrics, the reference reproduced FASM `9885b5d11288445a488e53aa7e3059a1411fb886046d246a2d3289ad6cd30eb0`, report `48c54a90b33497a37ebe2a5e44d912c8e89b3552d840d5f0f9c3d9bed8fec2f0`, checksums `0x86b726c6/0xeb2c108e/0xeea7ec3a`, history `91/284240/0/0/0` and normal timing-only exit 1.
+- Candidate/reference exits 1/1; complete FASM and report bytes, parsed reports, full router history and checksums are identical. Identity and QoR pass.
+- Reference -> candidate: whole wall 414.80 -> 412.47 s (**-0.5617%**), Router2 303.14 -> 302.41 s (**-0.2408%**), HeAP 45.84 -> 44.28 s (-3.4031%), analytic iteration sum 43.08 -> 41.72 s (-3.1569%), SA unchanged, peak RSS 1,558,080 -> 1,559,992 KiB (+0.1227%).
+- Decision: **ABANDON `perf/l2-heap-cell-location-index`: identity passes, but both whole-wall and Router2 gains are below the required 3.0%.** No second B1 pair, B2 run, merge or accepted tag. No lane-2 benchmark process remains.
