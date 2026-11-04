@@ -2,7 +2,11 @@
 
 ## Status
 
-**CLAIMED BEFORE BUILD on 2026-11-04.** Candidate `perf/reset-wires-reference-r1` is based directly on `40d3b873a9bbea1e0fbc399df5ee3c4eae3cbd39`; source commit and binary hash are pending. No B2 run is permitted while the B2 reference remains nondeterministic.
+**B1 RUNNING on 2026-11-04.** Candidate `perf/reset-wires-reference-r1` source `1047f166607a833849e9aa1a05d397219e1cb820` is based directly on `40d3b873a9bbea1e0fbc399df5ee3c4eae3cbd39`. Candidate binary SHA-256 is `5faf3b55cd9de970d3d5316b6980b65d4cc5cb67fe22f5ce4f11e300bdc86c2a`. No B2 run is permitted while the B2 reference remains nondeterministic.
+
+## Build and launch
+
+The Release/IPO xc7z020-only build completed on cores 40-63 in 236.86 s with both C/C++ compiler launchers set to `ccache`; generated `common/version.h` and `--version` report `perf-accepted-qor-revert-40d3b873`. B1 started at `2026-11-04T12:12:51Z` in `bench/results/20261104T120700Z-reset-wires-reference-r1-b1`, with candidate nextpnr 13740 on core 10 and reference nextpnr 13737 on core 11 under detached driver 13712. Actual concurrency is one pair (two processes), seed 1, one thread, 100 MHz and a 1920 s cap.
 
 ## Hypothesis and scope
 
