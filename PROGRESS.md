@@ -137,3 +137,10 @@ ACK 2026-11-04T13:04Z lane2: block 5
 
 ACK 2026-11-04T13:36Z lane2: block 6
 ACK 2026-11-04T14:05Z lane2: block 7
+
+
+## 2026-11-04T14:24:31Z — PortRef direct active-slot iteration built
+
+- Source `4b9f43e7` changes only `common/kernel/indexed_store.h` and `common/place/placer_heap.cc`: a direct ascending-active-slot `for_each` replaces the HeAP enumerated iterator wrappers and repeated bounds-checked accesses. Driver-first order, user indices and equation arithmetic are unchanged.
+- xc7z020-only Release/IPO build on cores 28-39 with both ccache launchers passed in 128.16 s, peak RSS 2,678,000 KiB. Candidate binary SHA-256 `9bea41f8abe23890ac36d3ff718c3aea5679f341bdd323b7eda5b843c2c77715`; full chipdb `--test` exited 0.
+- Reference remains the already validated accepted `5d36ce50` binary SHA-256 `881d8b4f66bba9375067c814b3eb223b888ed2bcc4bee3c16786560e100d36b7`. B1 will use candidate core 22/reference core 23; reference reproduction and identity are mandatory before timing interpretation.
