@@ -25,3 +25,12 @@ ACK 2026-11-04T10:34Z lane2: block 1
 - Decision: **ABANDON `perf/l2-heap-cell-location-index`: identity passes, but both whole-wall and Router2 gains are below the required 3.0%.** No second B1 pair, B2 run, merge or accepted tag. No lane-2 benchmark process remains.
 
 ACK 2026-11-04T11:04Z lane2: block 2
+
+## 2026-11-04T11:27:09Z — fast-mode pip-delay source bypass named before build
+
+- Base: `40d3b873a9bbea1e0fbc399df5ee3c4eae3cbd39` (`origin/perf/accepted-qor`). Candidate `perf/l2-fast-pip-delay-source-bypass`, expected tier 1, touches only `Arch::getPipDelay`.
+- Profile evidence: `getPipDelay` is 10.78% of B1 whole-run and 12.80% of B1 Router2 self time. In fast-delay routing the source-side RC product is multiplied by zero, but the base still normalises the source wire and walks its node timing on every query.
+- Distinct from abandoned `perf/pip-delay-flat-r2`: add no delay table, cache, setup hook or persistent state. Skip only the source-side work whose product is provably zero in fast mode; retain the original non-fast path and destination arithmetic in the original order.
+- Hypothesis: removing that dead source lookup and arithmetic reduces Router2 and whole wall time without changing any delay value, route decision, RNG or output.
+- Kill criterion: one B1 pair on candidate core 18/reference core 19, seed 1, one thread, 100 MHz, 1920 s cap. Require reference reproduction before candidate metrics, expected timing-only completion, byte-identical complete FASM, identical report/history/checksums/Fmax/utilization/final overuse, and at least 3.0% improvement in BOTH Router2 and whole wall. Any failure abandons with no B2 or rerun. Build with both C/C++ ccache launchers on cores 28-39 only.
+- Queue after this candidate: `perf/l2-bel-location-flat` (placement, tier 1) and `perf/l2-portref-iteration` (placement/traversal, tier 1); neither will be substituted for the current Router2-focused screen without a new profile rationale.
