@@ -25,4 +25,20 @@ Artifacts: `bench/results/20261104T055114Z-pip-availability-cache-r2-b1`. Candid
 
 Fmax is 41.83 MHz on both sides, router iteration is 91, and final overuse is 0. Report bytes and parsed reports, router history, checksums and complete FASM are identical. FASM SHA-256 is `9885b5d11288445a488e53aa7e3059a1411fb886046d246a2d3289ad6cd30eb0`.
 
-**B1 screen: PASS. Candidate acceptance remains pending two B2 pairs and a second B1 pair.**
+**B1 screen: PASS. This did not establish acceptance; the subsequent B2 identity gate failed.**
+
+## B2 identity gate and decision
+
+Artifacts: `bench/results/20261104T060300Z-pip-availability-cache-r2-b2`. Both pairs used seed 1, one thread, 100 MHz, concurrency 4 and an 8460 s cap. r1 used candidate/reference cores 0/1 and r2 used cores 2/3. All runs and comparisons exited 0.
+
+| Metric | r1 reference | r1 candidate | r1 change | r2 reference | r2 candidate | r2 change |
+|---|---:|---:|---:|---:|---:|---:|
+| Whole wall (s) | 2256.61 | 1998.65 | -11.4313% | 2236.23 | 1949.59 | -12.8180% |
+| Router2 (s) | 1282.44 | 1021.96 | -20.3113% | 1267.24 | 979.05 | -22.7415% |
+| Final router iteration | 17 | 19 | +2 | 17 | 19 | +2 |
+| Fmax (MHz) | 30.582909 | 30.810944 | +0.228035 | 30.582909 | 30.678610 | +0.095701 |
+| Final overuse | 0 | 0 | 0 | 0 | 0 | 0 |
+
+Both pairs fail complete-FASM, report-byte, parsed-report, router-history and checksum identity. Reference FASM SHA-256 is `403d98cb07094b313a0a075284e12c8371ff32d444a87b99707f12ff98c5ba80` in both pairs; candidate hashes are `17a009ade34ef5cd246625da7c9a3d35d08eb314a3c24dc556a2bd25581da5a6` (r1) and `323664d4d0f0773302e7e0e0cbe6378fcd5c9c9f8dda8ee4b798b9da2441c23c` (r2). Reference final checksums repeat as `0xc55c66c4/0x6deffc74/0xeae85389`; candidate final checksums are `0xc55c66c4/0x6deffc74/0xe5ed6db8` and `0xc55c66c4/0x6deffc74/0xea90f316`. FASM diffs contain 104391 additions/104341 deletions (r1) and 108033/108325 (r2).
+
+**Decision: ABANDON `fb31bd8e`. The wall improvements exceed 3%, but mandatory B2 FASM/report/history/checksum identity fails and candidate output differs across repeats. No second B1 pair, merge or tag is warranted.**
