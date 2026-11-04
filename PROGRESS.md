@@ -168,3 +168,8 @@ ACK 2026-11-04T14:26Z lane2: block 8
 
 - The 14:54:47Z attempt was discarded before metrics because its detached launcher did not persist exit codes. Both processes were stopped and artifacts moved to `20261104T144924Z-fast-pip-delay-source-bypass-full-model-b2-r1-tier2/invalid-launch-no-exit-capture`.
 - Relaunched the identical prescribed B2 tier-2 pair at 14:57:11Z with explicit `exit.txt` capture: candidate driver 817662 core 18, reference driver 817663 core 19, same result root and cap 8460 s. These are now the only valid full-model run pids.
+
+
+## 2026-11-04T15:26:34Z — full-model B2 progress
+
+- B2 tier-2 (reference nondeterministic) remains active with valid drivers 817662 (candidate core 18) and 817663 (reference core 19), cap 8460 s. Status: `{"candidate": {"analytic_iteration": 28, "analytic_last_s": 8.4, "full_model_marker": false, "router_iteration": null}, "reference": {"analytic_iteration": 28, "analytic_last_s": 9.15, "full_model_marker": false, "router_iteration": null}}`. No verdict or candidate metric has been taken from the discarded launcher attempt.
