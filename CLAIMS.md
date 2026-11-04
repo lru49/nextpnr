@@ -22,3 +22,4 @@ CLAIM 2026-11-04T13:16:00Z lane1 perf/route-backtrace-reference-r1 Router2/route
 DONE 2026-11-04T13:32:08Z lane2 perf/l2-fast-pip-delay-source-bypass tier2 accepted 5d36ce50; B1 wall -6.4033/-5.7045 Router2 -8.6972/-7.6495; B2 tier2 wall -3.7095/-4.5204 Router2 -6.2915/-7.4464
 ABANDONED 2026-11-04T13:37:00Z lane1 perf/route-backtrace-reference-r1 B1 identity PASS; wall -0.9221%, Router2 -0.7558%, both timing gates FAIL
 CLAIM 2026-11-04T13:37:00Z lane1 perf/visited-check-wiredata-r1 Router2/was_visited-access-reuse
+ABANDONED 2026-11-04T13:54:00Z lane1 perf/router2-existing-wire-bb-guard-r1 B1 identity FAIL; iteration 91 -> 88, FASM/report/history/checksums differ; no B2 or rerun
