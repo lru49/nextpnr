@@ -2,7 +2,7 @@
 
 ## Status
 
-Named before implementation on 2026-11-04; no build or benchmark result yet.
+B1 screen r1 passed on 2026-11-04 with complete identity/QoR and both required timing gains. Confirmation B1 r2 and two B2 pairs are still required; not accepted, merged or tagged.
 
 ## Base and branch
 
@@ -30,3 +30,25 @@ Before candidate metrics are inspected, the reference must reproduce:
 - iteration 91, final route triple 0/0/0 and Fmax 41.83 MHz.
 
 Abandon on a crash, timeout, non-timing error, non-convergence, any complete-FASM/report/history/checksum/QoR mismatch, or less than 3.0% paired improvement in either Router2 time or whole wall time. No second B1 pair or B2 run follows a failed screen. If it passes, acceptance still requires a second B1 pair and two B2 pairs under the existing tier gates.
+
+## Implementation and build
+
+Candidate source `d06f5c44233dbbfa825ec189839a428b72ab5a91` is based directly on `40d3b873a9bbea1e0fbc399df5ee3c4eae3cbd39`. It adds 18 lines in the two published files: the original arithmetic is retained in `compute_pip_delay`, fast-mode calls read a flat `std::vector<delay_t>`, and `set_fast_pip_delays` initializes it through the existing `pip_tile_offsets` and direct nested tile/pip loops. The source branch is pushed and its worktree is clean.
+
+The Release/IPO Xilinx-only build completed in 214.11 s with peak RSS 2,677,976 KiB. Both C and C++ compiler launchers are `ccache`; actual candidate/reference compile commands both use `-O3 -g` and `-flto=auto`. Candidate binary SHA-256 is `e18d4e3dce93034e5695762505323e5dd9ed0154bb2abe4d721d2919937f2d63`. Version/help smoke checks passed with the reference version string.
+
+## B1 screen r1: pass
+
+Result directory: `bench/results/20261104T080300Z-pip-delay-flat-r2-b1`. The reference reproduced every stored FASM/report/checksum/history/Fmax value before candidate metrics were inspected. Both runs then completed normally with the expected timing-only exit 1. Complete FASM, report bytes, parsed reports, router history and checksums are identical; iteration 91, final route 0/0/0 and Fmax 41.83 MHz are unchanged.
+
+| Metric | Reference | Candidate | Change |
+| --- | ---: | ---: | ---: |
+| Whole wall | 392.17 s | 358.65 s | **-8.5473%** |
+| Router2 | 285.75 s | 250.08 s | **-12.4829%** |
+| User time | 391.03 s | 357.49 s | -8.5773% |
+| Analytic iteration sum | 42.69 s | 42.88 s | +0.4451% |
+| HeAP | 45.29 s | 45.48 s | +0.4195% |
+| SA | 54.38 s | 54.68 s | +0.5517% |
+| Peak RSS | 1,558,076 KiB | 1,704,204 KiB | +9.3787% |
+
+This passes the B1 screen but is not final acceptance. One confirmation B1 pair and two B2 pairs remain mandatory before any integration branch merge or tag.
