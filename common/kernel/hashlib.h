@@ -1040,6 +1040,11 @@ template <typename K, typename OPS> class pool
         hashtable.clear();
         entries.clear();
     }
+    void clear_keep_capacity()
+    {
+        std::fill(hashtable.begin(), hashtable.end(), -1);
+        entries.clear();
+    }
 
     iterator begin() { return iterator(this, int(entries.size()) - 1); }
     iterator element(int n) { return iterator(this, int(entries.size()) - 1 - n); }

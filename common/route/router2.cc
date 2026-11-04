@@ -1245,7 +1245,7 @@ struct Router2
             return true;
 
         bool have_failures = false;
-        t.processed_sinks.clear();
+        t.processed_sinks.clear_keep_capacity();
         t.route_arcs.clear();
         t.wire_by_loc.clear();
         t.in_wire_by_loc.clear();
