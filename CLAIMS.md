@@ -27,3 +27,5 @@ CLAIM 2026-11-04T14:02:00Z lane1 perf/togo-wiredata-reference-r1 Router2/get_tog
 DONE 2026-11-04T14:07:13Z lane2 perf/l2-bel-location-flat ABANDONED at B1 gate; r1 wall 0.0000 Router2 -0.0351, r2 wall +0.7450 Router2 +0.7680; exact outputs, no merge
 CLAIM 2026-11-04T14:10:58Z lane2 perf/l2-portref-iteration HeAP foreach_port direct indexed_store active-slot traversal
 ABANDONED 2026-11-04T14:18:00Z lane1 perf/visited-check-wiredata-r1 B1 identity PASS; wall -0.7199%, Router2 -0.8894%, both timing gates FAIL
+ABANDONED 2026-11-04T14:23:00Z lane1 perf/togo-wiredata-reference-r1 B1 identity PASS; wall +0.3986%, Router2 +0.6143%, both timing gates FAIL
+CLAIM 2026-11-04T14:23:00Z lane1 perf/thread-test-wire-inline-r1 Router2/thread_test_wire direct bbox comparisons at two hot call sites
