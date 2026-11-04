@@ -2,7 +2,7 @@
 
 ## Status
 
-**BUILT; B1 pending.** Candidate `perf/visited-check-wiredata-r1` source `da45f4500bce0aee0604020ba9c1207a683507cf` is based directly on `40d3b873a9bbea1e0fbc399df5ee3c4eae3cbd39`. This is a semantics-preserving performance candidate, expected tier 1.
+**ABANDONED: B1 identity/QoR PASS, both timing gates FAIL; no B2, rerun, merge or tag.** Candidate `perf/visited-check-wiredata-r1` source `da45f4500bce0aee0604020ba9c1207a683507cf` is based directly on `40d3b873a9bbea1e0fbc399df5ee3c4eae3cbd39`. This was a semantics-preserving performance candidate, expected tier 1.
 
 ## Hypothesis and scope
 
@@ -17,3 +17,7 @@ Run one detached B1 pair only when its assigned cores are free, with reference r
 ## Build record
 
 Configure/build completed on cores 40-63 in 1.00/106.55 s, with maximum build RSS 2,677,980 KiB. CMakeCache verifies Release, IPO ON, xc7z020-only, both C/C++ `ccache` launchers and `CURRENT_GIT_VERSION=perf-accepted-qor-revert-40d3b873`; `--version` reports the same pinned version. Candidate binary SHA-256 is `e8b59357faa524714936887d7c40f0bed62dd3f945a3b7521153629207e8b808`. Base ancestry and `git diff --check` passed; only untracked build timing logs remain in the worktree.
+
+## B1 verdict
+
+Pair `20261104T135600Z-visited-check-wiredata-r1-b1` completed with expected timing-only exits 1/1 and reference-reproduction/comparison exits 0/0. Reference reproduction passed every stored constant before candidate metrics were inspected. Complete FASM/report bytes, parsed report, full router history, checksums, Fmax, utilization and final overuse matched at iteration 91. Whole wall changed from 413.96 to 410.98 s (-0.7199%) and Router2 from 300.21 to 297.54 s (-0.8894%), both below the required 3.0% improvement. The candidate is therefore abandoned with no B2, rerun, merge or tag.
