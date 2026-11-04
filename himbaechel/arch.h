@@ -474,6 +474,7 @@ struct Arch : BaseArch<ArchRanges>
 
     void load_chipdb(const std::string &path);
     void init_pip_bindings();
+    void init_bel_locations();
     void set_speed_grade(const std::string &speed);
     void set_package(const std::string &package);
 
@@ -507,10 +508,7 @@ struct Arch : BaseArch<ArchRanges>
     BelRange getBels() const override { return BelRange(chip_info); }
     Loc getBelLocation(BelId bel) const override
     {
-        Loc loc;
-        tile_xy(chip_info, bel.tile, loc.x, loc.y);
-        loc.z = chip_bel_info(chip_info, bel).z;
-        return loc;
+        return bel_locations[bel_tile_offsets[bel.tile] + bel.index];
     }
     BelId getBelByLocation(Loc loc) const override
     {
@@ -640,6 +638,11 @@ struct Arch : BaseArch<ArchRanges>
     {
         return UphillPipRange(chip_info, get_tile_wire_range(wire));
     }
+
+    // Immutable chipdb Bel locations, indexed exactly like BelId(tile, index).
+    // The extra offset entry stores both the end of each tile and the total bel count.
+    std::vector<size_t> bel_tile_offsets;
+    std::vector<Loc> bel_locations;
 
     // Flat mirror of base_pip2net for hot binding queries. The extra offset
     // entry stores both the end of each tile and the total pip count.

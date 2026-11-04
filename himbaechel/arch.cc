@@ -153,6 +153,7 @@ void Arch::load_chipdb(const std::string &path)
                                  i + chip_info->extra_constids->known_id_count);
     }
     init_pip_bindings();
+    init_bel_locations();
 }
 
 void Arch::init_pip_bindings()
@@ -165,6 +166,27 @@ void Arch::init_pip_bindings()
     }
     pip_tile_offsets.back() = pip_count;
     pip_bindings.assign(pip_count, nullptr);
+}
+
+void Arch::init_bel_locations()
+{
+    bel_tile_offsets.resize(chip_info->tile_insts.ssize() + 1);
+    size_t bel_count = 0;
+    for (int tile = 0; tile < chip_info->tile_insts.ssize(); tile++) {
+        bel_tile_offsets[tile] = bel_count;
+        bel_count += chip_tile_info(chip_info, tile).bels.size();
+    }
+    bel_tile_offsets.back() = bel_count;
+    bel_locations.resize(bel_count);
+    for (int tile = 0; tile < chip_info->tile_insts.ssize(); tile++) {
+        Loc loc;
+        tile_xy(chip_info, tile, loc.x, loc.y);
+        const auto &tile_data = chip_tile_info(chip_info, tile);
+        for (int index = 0; index < tile_data.bels.ssize(); index++) {
+            loc.z = tile_data.bels[index].z;
+            bel_locations[bel_tile_offsets[tile] + index] = loc;
+        }
+    }
 }
 
 void Arch::set_speed_grade(const std::string &speed)
