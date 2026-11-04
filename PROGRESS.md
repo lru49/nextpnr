@@ -156,3 +156,9 @@ ACK 2026-11-04T14:05Z lane2: block 7
 - Full-model harness `987f57f2` is now on `origin/perf/baseline`. Build reference exactly `40d3b873 + 987f57f2` and candidate exactly `5d36ce50 + 987f57f2`, then run one B2 r1 pair on candidate core 18/reference core 19. Record fast-model and full-model Fmax and append the result to the accepted document; acceptance stands unless full-model Fmax worsens.
 
 ACK 2026-11-04T14:26Z lane2: block 8
+
+
+## 2026-11-04T14:55:13Z — full-model B2 r1 launched
+
+- Built the prescribed full-model pair on cores 28-39 with 12 jobs and ccache. Reference `40d3b873 + 987f57f2` = `6ccf2ff830fb591ff0da37453b63050113f539c6`, binary SHA-256 `5158ffd8af68f4ca950e08579c434c495143e8ea3deba659c1627c157836ceb3`; candidate `5d36ce50 + 987f57f2` = `86d841933a540d81e6049b5f701a72147bc831d3`, binary SHA-256 `10b33f29dedcad7b28a0f46c4f7280b491d4a648211e526890b43505161bd7f7`. Both xilinx/meta submodules are `a4af910cac907f2cbd3a545f26f8e26573e860de`.
+- B2 tier-2 (reference nondeterministic): `20261104T144924Z-fast-pip-delay-source-bypass-full-model-b2-r1-tier2`, candidate driver 807782 core 18, reference driver 807783 core 19, started 2026-11-04T14:54:47Z, cap 8460 s. Record fast-model Fmax from report JSON and full-model Fmax after the new log marker; compare the new reference to the stored r1 reference before interpreting candidate metrics.
