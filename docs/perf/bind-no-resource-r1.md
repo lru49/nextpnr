@@ -2,7 +2,13 @@
 
 ## Status
 
-**CLAIMED; source, build and B1 result pending.** Base: `40d3b873a9bbea1e0fbc399df5ee3c4eae3cbd39`. Expected tier 1.
+**B1 RUNNING; verdict pending.** Source `b79d47bb36cc48363a29ebebf32fccaf8566bfa7` is based directly on `40d3b873a9bbea1e0fbc399df5ee3c4eae3cbd39`. Expected tier 1.
+
+## Build and launch record
+
+The pushed diff is limited to `common/route/router2.cc` (2 insertions/2 deletions). Base ancestry and `git diff --check` passed. Configure completed in 1.00 s; the first build stopped before candidate compilation because the fresh worktree's Xilinx metadata submodule was uninitialized. After initializing the pinned `a4af910cac907f2cbd3a545f26f8e26573e860de` submodule, the Release/IPO xc7z020-only build completed on cores 40-47 in 193.58 s at `-j4`, maximum RSS 2,678,124 KiB, with both C/C++ `ccache` launchers. `--version` reports `perf-accepted-qor-revert-40d3b873`; binary SHA-256 is `39e9f4da2ef24e41c2f346c54986db550229d32fe5a8e22210e313719a4b7c66`.
+
+B1 result dir: `bench/results/20261104T161500Z-bind-no-resource-r1-b1`. The detached driver started both runs at 16:18:19Z on candidate core 10/reference core 11, concurrently with the processed-sinks pair on cores 2/3. All hash guards passed. Reference reproduction precedes candidate comparison.
 
 ## Hypothesis and scope
 

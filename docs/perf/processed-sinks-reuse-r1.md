@@ -2,11 +2,17 @@
 
 ## Status
 
-**CLAIMED; source, build and B1 result pending.** Base: `40d3b873a9bbea1e0fbc399df5ee3c4eae3cbd39`. Expected tier 1.
+**B1 RUNNING; verdict pending.** Source `9a05fdeb192b1f8cd81fe6947426839b723f02f5` is based directly on `40d3b873a9bbea1e0fbc399df5ee3c4eae3cbd39`. Expected tier 1.
+
+## Build and launch record
+
+The pushed diff is limited to `common/kernel/hashlib.h` and `common/route/router2.cc` (6 insertions/1 deletion). Base ancestry and `git diff --check` passed. Configure completed in 0.99 s; the first build stopped before candidate compilation because the fresh worktree's Xilinx metadata submodule was uninitialized. After initializing the pinned `a4af910cac907f2cbd3a545f26f8e26573e860de` submodule, the Release/IPO xc7z020-only build completed on cores 40-47 in 193.85 s at `-j4`, maximum RSS 2,677,800 KiB, with both C/C++ `ccache` launchers. `--version` reports `perf-accepted-qor-revert-40d3b873`; binary SHA-256 is `e1cdde030b6657772bc4292aef842f1cef29db9659ced6a8c35b56a2c2c73035`.
+
+B1 result dir: `bench/results/20261104T161500Z-processed-sinks-reuse-r1-b1`. The detached driver started both runs at 16:18:19Z on candidate core 2/reference core 3, concurrently with the bind-no-resource pair on cores 10/11. All hash guards passed. Reference reproduction precedes candidate comparison.
 
 ## Hypothesis and scope
 
-`ThreadContext::processed_sinks` is a `pool<WireId>` used only for membership tests and insertion. `route_net()` currently calls `pool::clear()`, which releases the bucket vector; the next insertion allocates and rehashes a bucket array sized from the retained entry capacity. Add a pool operation that resets all existing buckets to `-1` and clears entries without releasing bucket storage, and use it only for `processed_sinks` at the per-net reset point.
+`ThreadContext::processed_sinks` is a `pool<WireId>` used only for membership tests and insertion. `route_net()` currently calls `pool::clear()`, which resets the bucket vector's size to zero while retaining its allocation; the next insertion resizes and initializes the bucket array from the retained entry capacity. Add a pool operation that resets all existing buckets to `-1` and clears entries without changing bucket size or releasing storage, and use it only for `processed_sinks` at the per-net reset point.
 
 This preserves set membership, insertion results, route/arc order, scoring, queue operations and RNG while removing repeated bucket allocation/initialization churn in Router2 scratch handling. It does not include the rejected router priority-queue capacity/reserve experiment, change generic `pool::clear()`, or touch other scratch containers. The profile does not isolate this cost and promises no gain.
 
