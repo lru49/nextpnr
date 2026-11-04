@@ -125,3 +125,15 @@ ACK 2026-11-04T13:04Z lane2: block 5
 
 - B1 r2 `20261104T135900Z-bel-location-flat-b1-r2`: current-base reference reproduction against r1 PASS (FASM, report, checksums and final iteration equal across cores 19/27); both candidate/reference exits 1 with normal timing-only completion. Candidate/reference FASM, report, router history and checksums are identical; final iteration 91/91.
 - B1 r2: wall 385.24 -> 388.11 s (+0.7450%), Router2 274.73 -> 276.84 s (+0.7680%), peak RSS +0.2777%. Together with r1 wall 0.0000% / Router2 -0.0351%, two independent-core pairs fail the required 3% wall and Router2 improvements. ABANDON `perf/l2-bel-location-flat`; no accepted-qor merge and no B2 run. Source branch and result roots remain as evidence.
+
+
+## 2026-11-04T14:17:06Z — directive ACKs and PortRef iteration claimed
+
+- Bel-location r1/r2 verdicts, reference reproduction, identity gates and wall/Router2 deltas are recorded above. Its B1 pairs actually used cores 18/19 and 26/27 because they were already built and running when block 6 arrived. Accepted integration `5d36ce50` is also recorded above.
+- Block 7 full-model-Fmax harness is not present on `origin/perf/baseline` at `4e6facbf`: no patch commits touching `himbaechel/arch.cc`/`arch.h` were found after accepted `5d36ce50`. Do not write a duplicate; fetch every 30 minutes. Once it lands, rebase/rebuild as directed and run one B2 r1 pair with candidate core 18/reference core 19, then append full-model Fmax to the accepted record. Acceptance stands unless candidate Fmax is worse.
+- Claimed `perf/l2-portref-iteration` at 14:10:58Z (claims commit `df280d47`) for HeAP `foreach_port` direct `indexed_store` active-slot traversal. Base is accepted `5d36ce50`; expected tier 1. Preserve driver-before-users order, ascending active-slot order, user indices, equation arithmetic and all RNG/output behavior.
+- Pending candidate queue: (1) `perf/l2-portref-iteration` — HeAP analytic placement traversal, tier 1; (2) `perf/l2-detail-place-portref-iteration` — detailed-placement PortRef traversal using the same direct active-slot mechanism if justified, tier 1; (3) `perf/l2-heap-cluster-offset-reuse` — HeAP equation construction, reuse immutable cluster-offset lookups without changing arithmetic, tier 1.
+- Kill gates: build/smoke failure, any reference or candidate/reference identity mismatch, or failure to improve both wall and Router2 by at least 3%. No B2 unless B1 passes. Build on cores 28-39 with both ccache launchers; B1 on candidate core 22/reference core 23 with seed 1, one thread, 100 MHz and 1920 s cap.
+
+ACK 2026-11-04T13:36Z lane2: block 6
+ACK 2026-11-04T14:05Z lane2: block 7
