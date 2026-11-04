@@ -541,11 +541,13 @@ struct Router2
                         ((std::abs(pl.x - nd.cx) + std::abs(pl.y - nd.cy)) / float(nd.hpwl));
         }
 
-        auto resource_key = wire_to_resource.find(wire);
-        if (resource_key != wire_to_resource.end()) {
-            auto &rd = flat_resources.at(resource_key->second);
-            resource_hist_cost = 1.0f + crit_weight * (rd.hist_cong_cost - 1.0f);
-            resource_present_cost = 1.0f + rd.value_count.size() * curr_cong_weight * crit_weight;
+        if (!wire_to_resource.empty()) {
+            auto resource_key = wire_to_resource.find(wire);
+            if (resource_key != wire_to_resource.end()) {
+                auto &rd = flat_resources.at(resource_key->second);
+                resource_hist_cost = 1.0f + crit_weight * (rd.hist_cong_cost - 1.0f);
+                resource_present_cost = 1.0f + rd.value_count.size() * curr_cong_weight * crit_weight;
+            }
         }
 
         // Density: cost a wire for sitting in a crowded tile, even when that
