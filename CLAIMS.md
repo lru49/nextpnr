@@ -17,3 +17,4 @@ CLAIM 2026-11-04T12:25:00Z lane1 perf/score-netdata-reference-r1 Router2/route_a
 CLAIM 2026-11-04T12:34Z lane1 b2-determinism-root-cause: suspect = threaded Router2 (NPNR_DISABLE_THREADS)
 ABANDONED 2026-11-04T12:52:00Z lane1 perf/score-netdata-reference-r1 B1 identity PASS; wall -0.6445%, Router2 -0.6192%, both timing gates FAIL
 CLAIM 2026-11-04T13:08:00Z lane1 perf/router2-existing-wire-bb-guard-r1 Router2/route_net+ripup_arc threaded existing-wire partition invariant
+CLAIM 2026-11-04T13:15:29Z lane2 perf/l2-bel-location-flat HeAP bel-location lookup flat storage
