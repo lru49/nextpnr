@@ -41,3 +41,4 @@ ABANDONED 2026-11-04T16:26:00Z lane1 perf/processed-sinks-reuse-r1 B1 identity P
 ABANDONED 2026-11-04T16:43:23Z lane2 perf/l2-heap-cluster-offset-reuse B1-r1 identity PASS but wall +0.4297% and Router2 +0.7232%; result 20261104T162736Z-heap-cluster-offset-reuse-b1-r1
 CLAIM 2026-11-04T16:44:05Z lane2 perf/l2-router2-visit-generation Router2/visited-stamps-generation-reuse
 ABANDONED 2026-11-04T17:03:38Z lane2 perf/l2-router2-visit-generation B1-r1 identity PASS but wall +1.2404% and Router2 +1.7892%; result 20261104T165208Z-router2-visit-generation-b1-r1
+CLAIM 2026-11-04T17:06:38Z lane2 perf/l2-router2-reset-visit-flags Router2/reset_wires-visit-flags-only
