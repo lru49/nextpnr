@@ -2,7 +2,7 @@
 
 ## Status
 
-B1 screen r1 passed on 2026-11-04 with complete identity/QoR and both required timing gains. Confirmation B1 r2 and two B2 pairs are still required; not accepted, merged or tagged.
+Both B1 pairs passed on 2026-11-04 with complete identity/QoR and both required timing gains. Two B2 pairs are running; the candidate is not accepted, merged or tagged.
 
 ## Base and branch
 
@@ -52,3 +52,20 @@ Result directory: `bench/results/20261104T080300Z-pip-delay-flat-r2-b1`. The ref
 | Peak RSS | 1,558,076 KiB | 1,704,204 KiB | +9.3787% |
 
 This passes the B1 screen but is not final acceptance. One confirmation B1 pair and two B2 pairs remain mandatory before any integration branch merge or tag.
+
+## B1 confirmation r2: pass
+
+Result directory: `bench/results/20261104T081400Z-pip-delay-flat-r2-b1-r2`. Reference reproduction again passed before candidate metrics were inspected. Both runs completed normally with the expected timing-only exit 1; comparison exit 0. Complete FASM, report bytes, parsed reports, full router history and checksums are identical, with iteration 91, final route 0/0/0 and Fmax 41.83 MHz.
+
+| Metric | Reference | Candidate | Change |
+| --- | ---: | ---: | ---: |
+| Whole wall | 392.05 s | 359.18 s | **-8.3841%** |
+| Router2 | 285.61 s | 250.73 s | **-12.2125%** |
+| User time | 390.93 s | 358.03 s | -8.4158% |
+| Peak RSS | 1,558,080 KiB | 1,704,180 KiB | +9.3769% |
+
+Both B1 pairs therefore pass the pre-published gates. This is not acceptance.
+
+## B2 repeats: running
+
+Two pairs started at 2026-11-04T08:30:35Z in `bench/results/20261104T082700Z-pip-delay-flat-r2-b2`: r1 uses candidate core 0/reference core 1 and r2 uses candidate core 2/reference core 3. Both use seed 1, one thread, 100 MHz, an 8460 s cap and the guarded B2 input. Each driver checks the stored reference FASM/report/checksum/history/Fmax result before candidate comparison. Both pairs must pass complete identity/QoR and at least 3.0% improvement in whole wall and Router2 before acceptance; no merge or tag is authorized meanwhile.
