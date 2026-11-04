@@ -119,3 +119,9 @@ ACK 2026-11-04T13:04Z lane2: block 5
 
 - B1 r1 `20261104T135028Z-bel-location-flat-b1`: both exits 1 with normal timing-only completion; FASM `4b93c41fced2d036511549b077c51c23cde1f29a5309b38f138010682bd2fb61`, report `48c54a90b33497a37ebe2a5e44d912c8e89b3552d840d5f0f9c3d9bed8fec2f0`, router history and checksums are candidate/reference identical; final iteration 91/91. Wall 360.88 -> 360.88 s (0.0000%), Router2 256.44 -> 256.35 s (-0.0351%), RSS +0.2441%: below both 3% gates, no verdict until r2.
 - The fresh current-base reference report matches the prior accepted reference, but its FASM differs from that older-base artifact; this is a cross-base observation, not a candidate/reference mismatch. B1 r2 `20261104T135900Z-bel-location-flat-b1-r2` on candidate core 26 / reference core 27 will test current-base reference reproducibility as well as the candidate kill gate.
+
+
+## 2026-11-04T14:06:48Z — ABANDON bel-location flat at the B1 kill gate
+
+- B1 r2 `20261104T135900Z-bel-location-flat-b1-r2`: current-base reference reproduction against r1 PASS (FASM, report, checksums and final iteration equal across cores 19/27); both candidate/reference exits 1 with normal timing-only completion. Candidate/reference FASM, report, router history and checksums are identical; final iteration 91/91.
+- B1 r2: wall 385.24 -> 388.11 s (+0.7450%), Router2 274.73 -> 276.84 s (+0.7680%), peak RSS +0.2777%. Together with r1 wall 0.0000% / Router2 -0.0351%, two independent-core pairs fail the required 3% wall and Router2 improvements. ABANDON `perf/l2-bel-location-flat`; no accepted-qor merge and no B2 run. Source branch and result roots remain as evidence.
